@@ -4,7 +4,7 @@
 
 ## 현재 상태
 
-만들기 전입니다. 지금은 문서(README.md, AGENTS.md, DECISIONS.md)만 있습니다.
+만들기 전입니다. 지금은 문서(README.md, AGENTS.md, DECISIONS.md, PLAN.md)만 있습니다.
 
 - 앱 안에 AI 기능은 넣지 않습니다.
 
@@ -15,6 +15,7 @@
 | [README.md](README.md) | 프로젝트 소개, 현재 상태, 시작·실행 방법 |
 | [AGENTS.md](AGENTS.md) | 이 프로젝트에서 일하는 AI의 작업 규칙 |
 | [DECISIONS.md](DECISIONS.md) | 사람이 확정한 결정 기록 |
+| [PLAN.md](PLAN.md) | 이번 목표와 범위, 작업 목록, 실제 검증 결과, 남은 문제와 다음 행동 |
 
 ## 시작 방법
 
