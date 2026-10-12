@@ -27,7 +27,7 @@
 | P-02 | AGENTS.md 작성 | 완료 | 새 대화에서 AI가 AGENTS.md 규칙을 설명하고, 없는 파일은 "없다"고 말한다. |
 | P-03 | DECISIONS.md에 D-001 기록 | 완료 | DECISIONS.md를 열면 D-001의 결정 내용, 결정 이유, 적용 범위, 유효 상태가 보인다. |
 | P-04 | PRD.md 작성 | 완료 | PRD.md를 열면 만들 기능 목록과 이번에 만들지 않을 기능 목록이 보인다. |
-| P-05 | ARCHITECTURE.md 작성 | 예정 | ARCHITECTURE.md를 열면 앱의 구성 요소와 그 관계가 보인다. 정하지 않은 기술은 "미정"으로 적혀 있다. |
+| P-05 | ARCHITECTURE.md 작성 | 진행 중 | ARCHITECTURE.md를 열면 앱의 구성 요소와 그 관계가 보인다. 정하지 않은 기술은 "미정"으로 적혀 있다. |
 | P-06 | SCREEN-SPEC.md 작성 | 예정 | SCREEN-SPEC.md를 열면 화면 목록과 화면마다 보이는 요소, 사용자 조작이 보인다. |
 | P-07 | DATA-MODEL.md 작성 | 예정 | DATA-MODEL.md를 열면 카드가 가진 항목과 상태 값(할 일 / 진행 중 / 완료)이 보인다. |
 | P-08 | API-SPEC.md 작성 | 예정 | API-SPEC.md를 열면 기능마다 주고받는 데이터가 보이고, API가 필요한지 여부가 적혀 있다. |
