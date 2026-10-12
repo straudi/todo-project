@@ -12,11 +12,11 @@
 
 | 문서 | 내용 |
 | --- | --- |
-| [README.md](README.md) | 프로젝트 소개, 현재 상태, 시작·실행 방법 |
-| [AGENTS.md](AGENTS.md) | 이 프로젝트에서 일하는 AI의 작업 규칙 |
-| [DECISIONS.md](DECISIONS.md) | 사람이 확정한 결정 기록 |
-| [PLAN.md](PLAN.md) | 이번 목표와 범위, 작업 목록, 실제 검증 결과, 남은 문제와 다음 행동 |
-| [PRD.md](PRD.md) | 만들 기능과 이번에 만들지 않을 기능 |
+| [README.md](README.md) | 이 프로젝트가 무엇이고, 지금 어떤 상태이고, 어떻게 실행하는지 (사람용) |
+| [AGENTS.md](AGENTS.md) | AI가 일할 때 지킬 규칙 |
+| [DECISIONS.md](DECISIONS.md) | 다르게 정할 수도 있었던 중요한 선택과 그 이유 (사람이 확정함) |
+| [PLAN.md](PLAN.md) | 작업, 상태, 완료 조건, 확인 결과, 다음 행동 |
+| [PRD.md](PRD.md) | 사용자가 보거나 겪는 일 (무엇을 만들지) |
 
 ## 시작 방법
 
