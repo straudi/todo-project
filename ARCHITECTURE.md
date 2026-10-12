@@ -4,12 +4,12 @@
 
 - **상태:** 확정
 - **관련 작업:** P-05
-- **근거 문서:** [PRD.md](PRD.md), [DECISIONS.md](DECISIONS.md) (D-001, D-002, D-003, D-004, D-005, D-006)
+- **근거 문서:** [PRD.md](PRD.md), [DECISIONS.md](DECISIONS.md) (D-001, D-002, D-003, D-004, D-005, D-006, D-007)
 
 ## 적용 범위와 전체 구조
 
 - **적용 범위:** 첫 버전 웹앱 전체 ([D-005](DECISIONS.md))
-- **지원 화면:** 컴퓨터 브라우저 ([D-003](DECISIONS.md))
+- **지원 화면:** 컴퓨터 브라우저와 휴대폰 브라우저 ([D-007](DECISIONS.md))
 - **기능 범위:** PRD.md를 따른다 ([D-004](DECISIONS.md)). 앱 안 AI 기능은 없다 ([D-001](DECISIONS.md)).
 - **구조:** 화면, 서버, 저장소 세 부분으로 나눈다 ([D-005](DECISIONS.md)).
 
