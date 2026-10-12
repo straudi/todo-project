@@ -14,7 +14,7 @@
 | [DECISIONS.md](DECISIONS.md) (D-001, D-002, D-003, D-004, D-005, D-006) | 있음 |
 | [PRD.md](PRD.md) | 있음 |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | 있음 |
-| SCREEN-SPEC.md | 없음 |
+| [SCREEN-SPEC.md](SCREEN-SPEC.md) | 있음 (초안) |
 | DATA-MODEL.md | 없음 |
 | API-SPEC.md | 없음 |
 | TEST-PLAN.md | 없음 |
