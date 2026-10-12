@@ -17,7 +17,7 @@
 | [DECISIONS.md](DECISIONS.md) | 다르게 정할 수도 있었던 중요한 선택과 그 이유 (사람이 확정함) |
 | [PLAN.md](PLAN.md) | 작업, 상태, 완료 조건, 확인 결과, 다음 행동 |
 | [PRD.md](PRD.md) | 사용자가 보거나 겪는 일 (무엇을 만들지) |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | 부품과 책임 (어떤 구조로) |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | 부품과 책임, 데이터 흐름 (어떤 구조로) |
 
 ## 시작 방법
 
