@@ -11,7 +11,7 @@
 | --- | --- |
 | [README.md](README.md) | 있음 |
 | [AGENTS.md](AGENTS.md) | 있음 |
-| [DECISIONS.md](DECISIONS.md) (D-001, D-002, D-003, D-004, D-005, D-006, D-007) | 있음 |
+| [DECISIONS.md](DECISIONS.md) (D-001, D-002, D-003, D-004, D-005, D-006, D-007, D-008) | 있음 |
 | [PRD.md](PRD.md) | 있음 |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | 있음 |
 | [SCREEN-SPEC.md](SCREEN-SPEC.md) | 있음 (초안) |
@@ -51,7 +51,7 @@ P-06 ~ P-09는 아직 검증하지 않았다.
 
 - README.md: "현재 상태", "프로젝트 문서" 표
 - AGENTS.md: "문서 역할" 표, "환경", "작업 전"
-- DECISIONS.md: D-002 결정 내용의 마지막 문장, D-005와 D-006 (새로 추가), D-003 유효 상태 (D-007로 대체됨), D-007 (새로 추가)
+- DECISIONS.md: D-002 결정 내용의 마지막 문장, D-005와 D-006 (새로 추가), D-003 유효 상태 (D-007로 대체됨), D-007과 D-008 (새로 추가)
 - PRD.md: "미정" 표 ("카드 옮기는 방법", "긴 글 표시 방법" 줄을 지움. SCREEN-SPEC.md에서 정함), F-01 (만들기 취소 문장 추가), 지원 화면 (D-007), "이번에 만들지 않을 기능" ("휴대폰 화면 지원" 줄을 지움)
 - ARCHITECTURE.md: 근거 문서 (D-007 추가), 지원 화면 (D-007)
 
