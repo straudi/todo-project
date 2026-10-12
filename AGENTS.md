@@ -17,7 +17,7 @@
 | DECISIONS.md | 다르게 정할 수도 있었던 중요한 선택과 그 이유 (사람이 확정함) | 있음 |
 | PLAN.md | 작업, 상태, 완료 조건, 확인 결과, 다음 행동 | 있음 |
 | PRD.md | 사용자가 보거나 겪는 일 (무엇을 만들지) | 있음 |
-| ARCHITECTURE.md | 부품과 책임 (어떤 구조로) | 없음 (P-05) |
+| ARCHITECTURE.md | 부품과 책임 (어떤 구조로) | 있음 |
 | SCREEN-SPEC.md | 화면에서 보이는 것과 할 수 있는 행동 | 없음 (P-06) |
 | DESIGN.md | 화면이 어떻게 보이는지 (색, 글자, 여백, 모양 규칙) | 없음 (만들지 미정) |
 | DATA-MODEL.md | 저장할 정보의 이름과 뜻 | 없음 (P-07) |
@@ -30,8 +30,8 @@
 
 ## 환경
 
-- 화면: React, 서버: FastAPI (Python), 저장소: SQLite ([D-005](DECISIONS.md))
-- 화면 쪽 언어(JavaScript / TypeScript), 각 도구의 버전, 그 밖의 라이브러리와 도구는 미정입니다.
+- 화면: React (TypeScript), 서버: FastAPI (Python), 저장소: SQLite ([D-005](DECISIONS.md), [D-006](DECISIONS.md))
+- 각 도구의 버전, 그 밖의 라이브러리와 도구는 미정입니다.
 - 정해지지 않은 언어, 라이브러리, 도구가 필요한 작업이면 직접 고르지 말고 사람에게 물어보세요.
 
 ## 작업 전

@@ -46,5 +46,13 @@
   - 역할이 나뉘어 오류를 찾기 쉬워서
   - 나중에 로그인을 붙이기 쉬워서
 - **적용 범위:** 첫 버전 웹앱 전체
-- **관련 기준 문서:** ARCHITECTURE.md(작성 예정)
+- **관련 기준 문서:** [ARCHITECTURE.md](ARCHITECTURE.md)
+- **유효 상태:** 유효
+
+## D-006. 화면 쪽 언어는 TypeScript로 한다
+
+- **결정 내용:** React로 만드는 화면의 코드는 TypeScript로 쓴다.
+- **결정 이유:** 미정
+- **적용 범위:** 첫 버전 웹앱 전체
+- **관련 기준 문서:** [ARCHITECTURE.md](ARCHITECTURE.md)
 - **유효 상태:** 유효
