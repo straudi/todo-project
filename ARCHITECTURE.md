@@ -37,6 +37,9 @@
 | 서버 | FastAPI (Python) | [D-005](DECISIONS.md) |
 | 저장소 | SQLite | [D-005](DECISIONS.md) |
 | 각 기술의 버전 | 미정 | |
+| 서버 테스트 | pytest + FastAPI TestClient | [D-011](DECISIONS.md) |
+| 브라우저 테스트 | Playwright (Node.js, TypeScript) | [D-011](DECISIONS.md) |
+| 화면 부품 테스트 | 미정 | [D-011](DECISIONS.md) |
 | 그 밖의 라이브러리·도구 | 미정 | |
 | 서버 실행 위치 | 내 컴퓨터 | [D-009](DECISIONS.md) |
 | 인터넷에 올리는 방법 (호스팅) | 해당 없음 | [D-009](DECISIONS.md) |

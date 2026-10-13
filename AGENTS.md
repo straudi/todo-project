@@ -31,6 +31,7 @@
 ## 환경
 
 - 화면: React (TypeScript), 서버: FastAPI (Python), 저장소: SQLite ([D-005](DECISIONS.md), [D-006](DECISIONS.md))
+- 자동 테스트: 서버는 pytest + FastAPI TestClient, 브라우저는 Playwright (Node.js, TypeScript) ([D-011](DECISIONS.md)). 화면 부품 테스트 도구는 미정입니다.
 - 각 도구의 버전, 그 밖의 라이브러리와 도구는 미정입니다.
 - 정해지지 않은 언어, 라이브러리, 도구가 필요한 작업이면 직접 고르지 말고 사람에게 물어보세요.
 

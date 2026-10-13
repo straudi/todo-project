@@ -80,3 +80,19 @@
 - **적용 범위:** 첫 버전
 - **관련 기준 문서:** [PRD.md](PRD.md), [ARCHITECTURE.md](ARCHITECTURE.md)
 - **유효 상태:** 유효
+
+## D-010. 자동 테스트를 먼저 실행하고, 통과하면 사람이 직접 확인한다
+
+- **결정 내용:** 첫 버전의 검증은 자동 테스트를 먼저 실행하고, 모두 통과하면 사람이 TEST-PLAN.md의 시나리오를 직접 따라 하며 확인한다. 자동 테스트가 실패하면 사람 확인으로 넘어가지 않는다.
+- **결정 이유:** 미정
+- **적용 범위:** 첫 버전
+- **관련 기준 문서:** [TEST-PLAN.md](TEST-PLAN.md)
+- **유효 상태:** 유효
+
+## D-011. 자동 테스트 도구는 서버 pytest, 브라우저 Playwright(TypeScript)로 한다
+
+- **결정 내용:** 서버(FastAPI) 테스트는 pytest와 FastAPI TestClient로 한다. 화면·서버·저장소를 함께 돌리는 브라우저 테스트는 Playwright의 Node.js(TypeScript)용으로 한다. 화면 부품 테스트 도구와 각 도구의 버전은 미정이다. 설치는 앱을 만들 때 따로 승인을 받고 한다.
+- **결정 이유:** 미정
+- **적용 범위:** 첫 버전
+- **관련 기준 문서:** [TEST-PLAN.md](TEST-PLAN.md), [ARCHITECTURE.md](ARCHITECTURE.md)
+- **유효 상태:** 유효
