@@ -169,5 +169,5 @@ ordered_at을 응답에 넣을지가 미정이어서, 아래 예시에는 넣지
 | 다른 기기에서 바뀐 카드 | 새로고침 전까지 화면은 모른다. CARD_NOT_FOUND를 받으면 어떻게 할지 | 새로고침할 때만 / 실패하면 목록 다시 받기 | [D-009](DECISIONS.md) |
 | 만들기 요청에 status가 올 때 | 무시하고 TODO로 할지, 거절할지 | 무시 / 거절 | PRD F-01 |
 | 수정 요청에 필드가 빠질 때 | 빠진 필드를 그대로 둘지, 거절할지 | 그대로 둠 / 거절 | PATCH 결정 |
-| 빈 설명, 제목 앞뒤 공백 | 저장할 때 바꿀지 | | [DATA-MODEL.md](DATA-MODEL.md) "미정" |
+| 제목 앞뒤 공백 | 저장할 때 지울지 | | [DATA-MODEL.md](DATA-MODEL.md) "미정" |
 | 필드 이름 | id, title, description, status, ordered_at | | [DATA-MODEL.md](DATA-MODEL.md) "미정" |
