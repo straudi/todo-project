@@ -20,11 +20,11 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | 목록 보기 (앱 열기, 새로고침) F-05, F-06 | `GET /api/tasks` | 모든 카드를 ordered_at이 늦은 것부터 돌려준다. | 세 칸에 상태별로 놓인다. 칸 안에서는 최근 카드가 맨 위다. | 서버에 닿지 못함, STORAGE_FAILED | 미정 (SCREEN-SPEC "미정") | 새로고침 |
 | 새 카드 만들기 (S-02에서 만들기) F-01, F-07 | `POST /api/tasks` | title을 검사한다. status를 TODO로, id와 ordered_at을 정해 저장한다. | 창이 닫히고, 카드가 "할 일" 칸 맨 위에 생긴다. | 빈 제목 (화면이 막음), TITLE_EMPTY (422, title 칸 오류), 서버에 닿지 못함, STORAGE_FAILED | 빈 제목: 창 안에 안내 문구, 적은 설명은 남음. 그 밖: 창이 열린 채 쓴 내용 유지 ([D-008](DECISIONS.md)). 실패 알림은 미정 | 만들기 다시 누르기, 취소 |
-| 내용 수정 (수정 → 저장) F-02, F-07 | `PATCH /api/tasks/{id}` | title을 검사한다. title과 description만 바꾼다. status와 ordered_at은 그대로 둔다. | 내용이 바뀐다. 칸 안 자리는 그대로다. | 빈 제목 (화면이 막음), TITLE_EMPTY (422, title 칸 오류), CARD_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 빈 제목: 안내 문구. 그 밖: 카드는 원래 내용. 고치던 글을 남길지와 실패 알림은 미정 (SCREEN-SPEC "미정") | 저장 다시 누르기, 취소 |
-| 상태 바꾸기 (상태 버튼, 다른 칸에 끌어다 놓기) F-04 | `PATCH /api/tasks/{id}/status` | status를 검사한다. 바꾼 뒤 ordered_at을 지금으로 정한다. | 카드가 새 칸 맨 위에 놓인다. | INVALID_STATUS, CARD_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 카드는 원래 칸, 원래 자리. 실패 알림은 미정 | 다시 누르거나 끌기, 새로고침 |
-| 삭제 ("정말 지울까요?"에서 "예") F-03 | `DELETE /api/tasks/{id}` | 카드를 저장소에서 지운다. | 카드가 사라진다. | CARD_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 카드가 남는다. 실패 알림은 미정 | 삭제 다시 누르기, 새로고침 |
+| 내용 수정 (수정 → 저장) F-02, F-07 | `PATCH /api/tasks/{id}` | title을 검사한다. title과 description만 바꾼다. status와 ordered_at은 그대로 둔다. | 내용이 바뀐다. 칸 안 자리는 그대로다. | 빈 제목 (화면이 막음), TITLE_EMPTY (422, title 칸 오류), TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 빈 제목: 안내 문구. 그 밖: 카드는 원래 내용. 고치던 글을 남길지와 실패 알림은 미정 (SCREEN-SPEC "미정") | 저장 다시 누르기, 취소 |
+| 상태 바꾸기 (상태 버튼, 다른 칸에 끌어다 놓기) F-04 | `PATCH /api/tasks/{id}/status` | status를 검사한다. 바꾼 뒤 ordered_at을 지금으로 정한다. | 카드가 새 칸 맨 위에 놓인다. | INVALID_STATUS, TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 카드는 원래 칸, 원래 자리. 실패 알림은 미정 | 다시 누르거나 끌기, 새로고침 |
+| 삭제 ("정말 지울까요?"에서 "예") F-03 | `DELETE /api/tasks/{id}` | 카드를 저장소에서 지운다. | 카드가 사라진다. | TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 카드가 남는다. 실패 알림은 미정 | 삭제 다시 누르기, 새로고침 |
 
-- CARD_NOT_FOUND는 주로 다른 기기에서 이미 지운 카드를 건드릴 때 생긴다 ([D-009](DECISIONS.md)). 이때 화면이 할 일은 미정이다 ("미정" 절).
+- TASK_NOT_FOUND는 주로 다른 기기에서 이미 지운 카드를 건드릴 때 생긴다 ([D-009](DECISIONS.md)). 이때 화면이 할 일은 미정이다 ("미정" 절).
 - 서버에 보내지 않는 행동: 새 카드 버튼 누르기, 만들기 취소, 수정 취소, 삭제 "아니오". 원래 칸에 끌어다 놓기를 보낼지는 미정이다 ("API 계약 결정 기록").
 
 ## 공통 규칙
@@ -58,7 +58,7 @@
 | --- | --- | --- | --- |
 | title이 비었거나 공백뿐 | title | 422 (결정) | TITLE_EMPTY |
 | status가 세 값 중 하나가 아님 | status | 422 | INVALID_STATUS |
-| 없는 카드 | 해당 없음 | 404 | CARD_NOT_FOUND |
+| 없는 카드 | 해당 없음 | 404 | TASK_NOT_FOUND (결정) |
 | 저장소에 읽거나 쓰지 못함 | 해당 없음 | 500 | STORAGE_FAILED |
 
 ## 엔드포인트
@@ -156,7 +156,7 @@ ordered_at을 응답에 넣을지가 미정이어서, 아래 예시에는 넣지
 | 응답에 ordered_at 넣기 | 넣는다 / 넣지 않는다 | 미정 | 미정 | 넣는다: 화면이 자리를 스스로 정할 수 있다. 넣지 않는다: 보이지 않는 값을 주고받지 않는다. |
 | 원래 칸에 끌어다 놓기 | 화면이 보내지 않음 / 서버가 받고 바꾸지 않음 / 둘 다 | 미정 | 미정 | 어느 쪽이든 ordered_at은 바뀌지 않아야 한다. |
 | 오류 본문 모양 | FastAPI 기본 / 이 프로젝트에서 정한 모양 | 미정 | 미정 | 정한 모양이면 화면이 거절 이유로 안내를 나누기 쉽다. |
-| 거절 이유 이름 | CARD_NOT_FOUND / TASK_NOT_FOUND 등 | 미정 | 미정 | 사용자에게는 보이지 않는다. |
+| 거절 이유 이름 | CARD_NOT_FOUND / TASK_NOT_FOUND 등 | 없는 카드는 TASK_NOT_FOUND. 코드와 API 이름은 task, 화면에 보이는 말은 "카드"로 한다 (2026-10-13). 다른 거절 이유 이름은 미정 | 미정 | 사용자에게는 보이지 않는다. |
 
 ## 미정
 
@@ -166,7 +166,7 @@ ordered_at을 응답에 넣을지가 미정이어서, 아래 예시에는 넣지
 | --- | --- | --- | --- |
 | 서버 주소와 포트 | 화면이 요청을 보낼 곳 | | [D-009](DECISIONS.md) |
 | 다른 기기에서 접근 | 같은 네트워크의 다른 기기가 서버에 닿게 하는 설정을 어디에 적을지 | README.md "실행 방법" / ARCHITECTURE.md | [D-009](DECISIONS.md) |
-| 다른 기기에서 바뀐 카드 | 새로고침 전까지 화면은 모른다. CARD_NOT_FOUND를 받으면 어떻게 할지 | 새로고침할 때만 / 실패하면 목록 다시 받기 | [D-009](DECISIONS.md) |
+| 다른 기기에서 바뀐 카드 | 새로고침 전까지 화면은 모른다. TASK_NOT_FOUND를 받으면 어떻게 할지 | 새로고침할 때만 / 실패하면 목록 다시 받기 | [D-009](DECISIONS.md) |
 | 만들기 요청에 status가 올 때 | 무시하고 TODO로 할지, 거절할지 | 무시 / 거절 | PRD F-01 |
 | 수정 요청에 필드가 빠질 때 | 빠진 필드를 그대로 둘지, 거절할지 | 그대로 둠 / 거절 | PATCH 결정 |
 | 제목 앞뒤 공백 | 저장할 때 지울지 | | [DATA-MODEL.md](DATA-MODEL.md) "미정" |
