@@ -17,7 +17,7 @@
 | [SCREEN-SPEC.md](SCREEN-SPEC.md) | 있음 |
 | [DATA-MODEL.md](DATA-MODEL.md) | 있음 |
 | [API-SPEC.md](API-SPEC.md) | 있음 |
-| [TEST-PLAN.md](TEST-PLAN.md) | 작성 중 |
+| [TEST-PLAN.md](TEST-PLAN.md) | 있음 |
 
 ## 작업 목록
 
@@ -31,9 +31,9 @@
 | P-06 | SCREEN-SPEC.md 작성 | 완료 | SCREEN-SPEC.md를 열면 화면 목록과 화면마다 보이는 요소, 사용자 조작이 보인다. |
 | P-07 | DATA-MODEL.md 작성 | 완료 | DATA-MODEL.md를 열면 카드가 가진 항목과 상태 값(할 일 / 진행 중 / 완료)이 보인다. |
 | P-08 | API-SPEC.md 작성 | 완료 | API-SPEC.md를 열면 기능마다 화면과 서버가 주고받는 데이터가 보인다. |
-| P-09 | TEST-PLAN.md 작성 | 진행 중 | TEST-PLAN.md를 열면 PRD의 기능마다 확인 방법과 기대 결과가 보인다. |
+| P-09 | TEST-PLAN.md 작성 | 완료 | TEST-PLAN.md를 열면 PRD의 기능마다 확인 방법과 기대 결과가 보인다. |
 
-다음 작업: P-09 TEST-PLAN.md 작성
+다음 작업: STEP 11-0 구현 인계 작성
 
 ## 실제 검증 결과
 
@@ -47,8 +47,7 @@
 | SCREEN-SPEC.md | 사람 | 파일을 열어 P-06 완료 조건(화면 목록, 화면마다 보이는 요소, 사용자 조작)이 보이는지 확인함. "대안과 결정" 다섯 항목을 정함 (2026-10-12) | 확인함 |
 | DATA-MODEL.md | 사람 | 검토 기록 항목을 확인하고 확정함 (2026-10-12) | 확인함 |
 | API-SPEC.md | 사람 | 파일을 보고 "API 계약 결정 기록"의 다섯 항목(PATCH, 204, 칸별 오류, /api/tasks, 빈 제목 422)을 정하고 확정함 (2026-10-13) | 확인함 |
-
-P-09는 아직 검증하지 않았다.
+| TEST-PLAN.md | 사람 | 파일을 보고 확정함 (2026-10-13) | 확인함 |
 
 위 표에서 확인한 뒤에 바뀌어, 사람이 다시 확인해야 하는 곳:
 
