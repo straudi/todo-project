@@ -4,7 +4,7 @@
 
 ## 현재 상태
 
-만들기 전입니다. 지금은 문서(README.md, AGENTS.md, DECISIONS.md, PLAN.md, PRD.md, ARCHITECTURE.md, SCREEN-SPEC.md, DATA-MODEL.md)만 있습니다.
+만들기 전입니다. 지금은 문서(README.md, AGENTS.md, DECISIONS.md, PLAN.md, PRD.md, ARCHITECTURE.md, SCREEN-SPEC.md, DATA-MODEL.md, API-SPEC.md)만 있습니다.
 
 - 앱 안에 AI 기능은 넣지 않습니다.
 
@@ -20,6 +20,7 @@
 | [ARCHITECTURE.md](ARCHITECTURE.md) | 부품과 책임, 데이터 흐름 (어떤 구조로) |
 | [SCREEN-SPEC.md](SCREEN-SPEC.md) | 화면에서 보이는 것과 할 수 있는 행동 |
 | [DATA-MODEL.md](DATA-MODEL.md) | 저장할 정보의 이름과 뜻 |
+| [API-SPEC.md](API-SPEC.md) | 화면과 서버가 주고받는 약속 |
 
 ## 시작 방법
 

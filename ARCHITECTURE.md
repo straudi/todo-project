@@ -111,6 +111,6 @@
 | --- | --- | --- |
 | 화면 목록, 보이는 요소, 조작, 카드 옮기는 방법, 긴 글 표시, 실패 안내 | [SCREEN-SPEC.md](SCREEN-SPEC.md) | 작성됨 |
 | 카드가 가진 항목, 상태 값, 칸 안 순서 기준 | [DATA-MODEL.md](DATA-MODEL.md) | 작성됨 |
-| 화면과 서버가 주고받는 요청·응답, 거절과 실패의 모양 | API-SPEC.md | 없음 (P-08) |
+| 화면과 서버가 주고받는 요청·응답, 거절과 실패의 모양 | [API-SPEC.md](API-SPEC.md) | 작성됨 |
 | 기능마다 확인 방법과 기대 결과 | TEST-PLAN.md | 없음 (P-09) |
 | 새로 정하는 중요한 선택 | [DECISIONS.md](DECISIONS.md) | 있음 |
