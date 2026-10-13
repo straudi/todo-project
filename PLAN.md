@@ -17,7 +17,7 @@
 | [SCREEN-SPEC.md](SCREEN-SPEC.md) | 있음 |
 | [DATA-MODEL.md](DATA-MODEL.md) | 있음 |
 | [API-SPEC.md](API-SPEC.md) | 있음 |
-| TEST-PLAN.md | 없음 |
+| [TEST-PLAN.md](TEST-PLAN.md) | 작성 중 |
 
 ## 작업 목록
 
@@ -31,7 +31,7 @@
 | P-06 | SCREEN-SPEC.md 작성 | 완료 | SCREEN-SPEC.md를 열면 화면 목록과 화면마다 보이는 요소, 사용자 조작이 보인다. |
 | P-07 | DATA-MODEL.md 작성 | 완료 | DATA-MODEL.md를 열면 카드가 가진 항목과 상태 값(할 일 / 진행 중 / 완료)이 보인다. |
 | P-08 | API-SPEC.md 작성 | 완료 | API-SPEC.md를 열면 기능마다 화면과 서버가 주고받는 데이터가 보인다. |
-| P-09 | TEST-PLAN.md 작성 | 예정 | TEST-PLAN.md를 열면 PRD의 기능마다 확인 방법과 기대 결과가 보인다. |
+| P-09 | TEST-PLAN.md 작성 | 진행 중 | TEST-PLAN.md를 열면 PRD의 기능마다 확인 방법과 기대 결과가 보인다. |
 
 다음 작업: P-09 TEST-PLAN.md 작성
 
@@ -61,6 +61,10 @@ P-09는 아직 검증하지 않았다.
 - README.md: "현재 상태", "프로젝트 문서" 표 (API-SPEC.md 추가)
 - AGENTS.md: "문서 역할" 표의 API-SPEC.md 상태 (있음)
 - ARCHITECTURE.md: "상세 설계 연결" 표의 API-SPEC.md 줄 (작성됨)
+- README.md: "현재 상태", "프로젝트 문서" 표 (TEST-PLAN.md 추가, 작성 중)
+- AGENTS.md: "문서 역할" 표의 TEST-PLAN.md 상태 (작성 중)
+- ARCHITECTURE.md: "상세 설계 연결" 표의 TEST-PLAN.md 줄 (작성 중)
+- SCREEN-SPEC.md: "미정" 표 ("처리 중 상태", "처리 중에 다시 누르기" 추가, 확정 뒤에 고침)
 
 ## 남은 문제와 다음 행동
 
