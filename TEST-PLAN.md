@@ -94,12 +94,12 @@
 
 ### 화면을 거치지 않고 서버에 직접 보낸 잘못된 요청
 
-오류 본문의 모양은 미정이라 ([API-SPEC.md](API-SPEC.md) "API 계약 결정 기록"), 응답 번호와 거절 이유 이름만 확인한다. "(AI 제안)"이 붙은 응답 번호와 이름은 확정되지 않았다.
+오류 본문의 모양은 미정이라 ([API-SPEC.md](API-SPEC.md) "API 계약 결정 기록"), 응답 번호와 거절 이유 이름만 확인한다. 결정된 것은 빈 제목의 422와 칸별 오류뿐이다. 필드 이름(title, status), 거절 이유 이름(TITLE_EMPTY 포함), 상태 바꾸기 주소를 `/status`로 따로 둘지, "(AI 제안)"이 붙은 응답 번호는 확정되지 않았다.
 
 | 시나리오 | 시작 조건과 입력 | 행동 | 기대 결과 | 관련 요구와 설계 | 자동 테스트 (AI 제안) |
 | --- | --- | --- | --- | --- | --- |
 | T-37 빈 제목으로 만들기 | 보드의 카드 수를 세어 둔다. 본문 `{"title": "", "description": null}` | `POST /api/tasks`로 보낸다. 그다음 앱을 새로고침한다. | 응답 번호 422가 온다. 응답 안에 title 필드와 TITLE_EMPTY가 보인다. 새로고침해도 보드의 카드 수는 세어 둔 수와 같다. | ARCHITECTURE "서버: 입력 검사", API-SPEC "오류" | pytest |
-| T-38 띄어쓰기만 넣은 제목으로 만들기 | 본문 `{"title": "   ", "description": null}` | `POST /api/tasks`로 보낸다. 그다음 앱을 새로고침한다. | T-37과 같다. | ARCHITECTURE "서버: 입력 검사", API-SPEC "오류" | pytest |
+| T-38 공백만 넣은 제목으로 만들기 | 본문의 title을 띄어쓰기만(`"   "`), 탭만(`"\t"`), 줄바꿈만(`"\n"`), 섞어서(`" \t\n"`) 네 가지로, description은 null | `POST /api/tasks`로 하나씩 보낸다. 그다음 앱을 새로고침한다. | T-37과 같다. | ARCHITECTURE "서버: 입력 검사", API-SPEC "오류" | pytest |
 | T-39 빈 제목으로 수정 | 보드에 "보고서 쓰기" 카드가 있다. 본문 `{"title": "  ", "description": null}` | 이 카드의 `PATCH /api/tasks/{id}`로 보낸다. 그다음 앱을 새로고침한다. | 응답 번호 422가 오고, 응답 안에 title 필드와 TITLE_EMPTY가 보인다. 새로고침하면 "보고서 쓰기"가 원래 칸, 원래 자리에 원래 설명과 함께 보인다. | ARCHITECTURE "서버: 입력 검사", API-SPEC "오류" | pytest |
 | T-40 세 값이 아닌 상태 값 | "할 일" 칸에 카드가 있다. 본문 `{"status": "ARCHIVED"}`, `{"status": "done"}`, `{"status": "완료"}` | 그 카드의 `PATCH /api/tasks/{id}/status`로 하나씩 보낸다. 그다음 앱을 새로고침한다. | 세 번 모두 응답 번호 422 (AI 제안)가 오고, 응답 안에 status 필드와 INVALID_STATUS (AI 제안)가 보인다. 새로고침하면 카드는 "할 일" 칸의 원래 자리에 있다. | DATA-MODEL "상태 값", API-SPEC "오류" | pytest |
 | T-41 빈 상태 값 | "할 일" 칸에 카드가 있다. 본문 `{"status": ""}`, `{"status": null}` | 그 카드의 `PATCH /api/tasks/{id}/status`로 하나씩 보낸다. 그다음 앱을 새로고침한다. | 두 번 모두 응답 번호 422 (AI 제안)가 오고, 응답 안에 status 필드가 보인다. 새로고침하면 카드는 "할 일" 칸의 원래 자리에 있다. | API-SPEC "카드 필드" (status 비어 있으면 안 됨) | pytest |
