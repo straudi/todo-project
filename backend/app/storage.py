@@ -1,4 +1,5 @@
 import sqlite3
+import time
 from contextlib import closing
 from pathlib import Path
 
@@ -39,3 +40,18 @@ class Storage:
                 " ORDER BY ordered_at DESC, id DESC"
             ).fetchall()
         return [dict(row) for row in rows]
+
+    def create_task(self, title: str, description: str | None) -> dict:
+        """새 카드는 항상 TODO로, 순서 기준 시각은 지금으로 정한다."""
+        ordered_at = time.time_ns() // 1000
+        with closing(self._connect()) as conn, conn:
+            cursor = conn.execute(
+                "INSERT INTO tasks (title, description, status, ordered_at)"
+                " VALUES (?, ?, 'TODO', ?)",
+                (title, description, ordered_at),
+            )
+            row = conn.execute(
+                "SELECT id, title, description, status FROM tasks WHERE id = ?",
+                (cursor.lastrowid,),
+            ).fetchone()
+        return dict(row)

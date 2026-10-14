@@ -36,15 +36,15 @@
 | P-11 | 화면 틀 | 완료 | 화면을 켜고 컴퓨터 Chrome에서 열면 "할 일", "진행 중", "완료" 칸 이름 세 개와 새 카드 버튼이 보인다 (T-01의 모양, 서버 연결 전). 세 칸의 왼쪽부터 순서는 사람이 정한 뒤에 맞춘다. |
 | P-12 | 서버 틀 | 완료 | 서버를 켜면 SQLite 파일이 생기고, `GET /api/tasks`에 200과 빈 목록이 온다. 이를 확인하는 pytest가 통과한다. |
 | P-13 | 화면·서버 연결 | 완료 | 자동 테스트에서 저장소에 카드를 미리 넣고 앱을 열면, 그 카드가 상태에 맞는 칸에 순서대로 보인다. 화면은 저장소에 직접 닿지 않고 `GET /api/tasks`를 거친다. |
-| P-14 | 카드 만들기 | 예정 | T-02 ~ T-08 (Playwright), T-37, T-38 (pytest)이 통과한다. |
+| P-14 | 카드 만들기 | 완료 | T-02 ~ T-07과 T-08의 보드 부분 (Playwright), T-37, T-38 (pytest)이 통과한다. T-08의 "수정을 누르면 설명 전체가 보인다"는 P-17에서 확인한다. |
 | P-15 | 목록·새로고침 유지 | 예정 | T-01, T-27, T-28 (Playwright)이 통과한다. |
 | P-16 | 상태 바꾸기 | 예정 | T-14 ~ T-24 (Playwright), T-40, T-41 (pytest)이 통과한다. |
-| P-17 | 수정·삭제 | 예정 | T-09 ~ T-13, T-25, T-26 (Playwright), T-39, T-42 (pytest)가 통과한다. 수정·삭제 확인을 하는 곳(SCREEN-SPEC "미정")은 사람이 정한 뒤에 만든다. |
+| P-17 | 수정·삭제 | 예정 | T-08의 수정 부분, T-09 ~ T-13, T-25, T-26 (Playwright), T-39, T-42 (pytest)가 통과한다. 수정·삭제 확인을 하는 곳(SCREEN-SPEC "미정")은 사람이 정한 뒤에 만든다. |
 | P-18 | 실패 처리 | 예정 | T-32 ~ T-36 (Playwright)이 통과한다. 실패 알림 문구, 수정 실패 때 입력칸, 처음 열 때 목록을 받지 못했을 때의 화면은 SCREEN-SPEC "미정"이라, 정해지기 전에는 만들지 않는다. |
 | P-19 | 껐다 켜고 다시 실행 | 예정 | T-29가 통과한다. 화면과 서버를 모두 끈 뒤 README.md "실행 방법"에 적힌 대로만 다시 켜면 T-27과 같은 결과가 보인다. README.md "실행 방법"이 채워져 있다. |
 | P-20 | 전체 시험과 기준점 | 예정 | 자동 테스트(pytest, Playwright)를 한 번에 실행해 모두 통과한다. 그다음 사람이 TEST-PLAN.md T-01 ~ T-42를 직접 확인한다 ([D-010](DECISIONS.md)). 결과를 "실제 검증 결과"에 적고, 바뀐 파일 목록을 보여 준 뒤 사람 승인을 받아 기준점 커밋을 만든다. |
 
-다음 작업: P-14 카드 만들기
+다음 작업: P-15 목록·새로고침 유지
 
 ## 구현 인계
 
@@ -53,7 +53,7 @@
 | 승인한 작업 범위 | 작업 목록 P-10 ~ P-20을 한 번에 하나씩 한다. 한 작업이 끝나면 확인 결과를 보고하고, 다음 작업은 사람이 승인한 뒤에 시작한다. |
 | 유지할 동작과 금지할 변경 | PRD에 없는 기능을 넣지 않는다 ([D-004](DECISIONS.md)). 앱 안에 AI 기능을 넣지 않는다 ([D-001](DECISIONS.md)). 확정 문서에 정한 이름과 규칙(`/api/tasks`, TASK_NOT_FOUND, 상태 값, 칸 안 순서 기준 등)을 바꾸지 않는다. 이미 설치된 도구의 버전은 바꾸지 않는다 (업그레이드, 다운그레이드, 재설치 금지). |
 | 읽을 요구·설계·TEST-PLAN 항목 | [PRD.md](PRD.md), [ARCHITECTURE.md](ARCHITECTURE.md), [SCREEN-SPEC.md](SCREEN-SPEC.md), [DATA-MODEL.md](DATA-MODEL.md), [API-SPEC.md](API-SPEC.md), [TEST-PLAN.md](TEST-PLAN.md). 작업마다 완료 조건에 적힌 T 번호를 본다. |
-| 다음 실행 위치와 확인할 명령 | P-14 카드 만들기. 확인할 명령: 서버 테스트는 `backend/`에서 `.venv/Scripts/python -m pytest -v`, 브라우저 테스트는 `e2e/`에서 `npx playwright test`, 화면 빌드는 `frontend/`에서 `npm run build` (도구는 [D-012](DECISIONS.md), 폴더와 실행 구성은 [D-013](DECISIONS.md)). |
+| 다음 실행 위치와 확인할 명령 | P-15 목록·새로고침 유지. 확인할 명령: 서버 테스트는 `backend/`에서 `.venv/Scripts/python -m pytest -v`, 브라우저 테스트는 `e2e/`에서 `npx playwright test`, 화면 빌드는 `frontend/`에서 `npm run build` (도구는 [D-012](DECISIONS.md), 폴더와 실행 구성은 [D-013](DECISIONS.md)). |
 | 중단 조건과 복구 방법 | 문서끼리 다르거나 정하지 않은 것이 나오면 멈추고 사람에게 묻는다. 문제가 생기면 마지막 커밋으로 되돌린다. 되돌리기는 고친 내용을 지우므로 매번 따로 승인을 받는다. |
 
 ## 실제 검증 결과
@@ -76,6 +76,7 @@
 | P-11 화면 틀 (Chrome) | 사람 | 컴퓨터 Chrome에서 http://localhost:5173 을 열어 봄 (2026-10-14) | 확인함 |
 | P-12 서버 틀 | AI | `backend/`에서 `.venv/Scripts/python -m pytest -v`를 실행함. `backend/data/`가 없는 것을 본 뒤 서버를 켜고, 파일이 생겼는지와 `tasks` 표 정의를 읽고, `curl -i http://127.0.0.1:8000/api/tasks`를 보냄 (2026-10-14) | pytest 2개 통과 (경고 1개: httpx 사용 중단 예고). `backend/data/tasks.db`가 생김. 칸은 id, title, description, status, ordered_at. 응답 `HTTP/1.1 200 OK`, 본문 `[]` |
 | P-13 화면·서버 연결 | AI | `e2e/`에서 `npx playwright test`, `backend/`에서 pytest, `frontend/`에서 `npm run build`를 실행함. 켜 둔 개발 서버(5173 → 8000)를 앱 안 브라우저로 열어 화면, `/api/tasks` 요청, 콘솔 오류를 봄. 실제 저장소의 카드 수를 셈 (2026-10-14) | Playwright 1개 통과 (설치된 Chrome). pytest 3개 통과 (경고 1개: httpx). 빌드 오류 없음. 개발 서버: 빈 세 칸, `GET /api/tasks` 200, 콘솔 오류 없음. 실제 저장소 카드 0장 (테스트가 건드리지 않음) |
+| P-14 카드 만들기 | AI | `backend/`에서 pytest, `e2e/`에서 `npx playwright test`, `frontend/`에서 `npm run build`를 실행함 (2026-10-14) | pytest 18개 통과 (T-37, T-38 포함, 경고 1개: httpx). Playwright 8개 통과 (기존 1개, T-02 ~ T-07, T-08 보드 부분). 처음 실행 때 T-08이 테스트의 줄 높이 측정 방법 때문에 실패해서, 측정 방법을 고친 뒤 다시 실행해 통과함. 빌드 오류 없음 |
 
 위 표에서 확인한 뒤에 바뀌어, 사람이 다시 확인해야 하는 곳:
 
@@ -127,6 +128,11 @@
 - ARCHITECTURE.md: "기술과 실행 환경" ("브라우저 테스트 실행 환경" 줄 추가)
 - AGENTS.md: "환경"의 버전 줄 (Playwright)
 - README.md: "현재 상태" (화면과 서버를 이음)
+- SCREEN-SPEC.md: "S-01 보이는 요소" 아래 안내 문구 문장, "대안과 결정" (제목 없음 안내 문구, 만들기 처리 중, 만들기 창 닫는 방법 줄 추가), "미정" 표 (안내 문구의 문장, 처리 중 상태, 처리 중에 다시 누르기를 좁힘)
+- API-SPEC.md: "카드 필드"의 ordered_at, "오류" (TITLE_EMPTY 확정, 오류 본문 모양, INVALID_TYPE, status 무시, 표 두 줄), 빈 제목 예시, "API 계약 결정 기록" (응답에 ordered_at, 오류 본문 모양, 거절 이유 이름, 네 줄 추가), "미정" 표 (두 줄을 지움)
+- DATA-MODEL.md: "SQLite 변환 초안"의 title, "데이터 규칙 결정 기록" ("제목 앞뒤 공백" 추가), "미정" (없음)
+- TEST-PLAN.md: "화면을 거치지 않고 서버에 직접 보낸 잘못된 요청"의 설명 줄, "미정" 표 (처리 중 두 줄을 고침, title·status 요청 줄을 지움)
+- README.md: "현재 상태" (카드 만들기)
 
 ## 남은 문제와 다음 행동
 

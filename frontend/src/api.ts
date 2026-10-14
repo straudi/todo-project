@@ -8,11 +8,40 @@ export type Task = {
   status: TaskStatus
 }
 
+// 입력 오류는 칸별로 온다 (API-SPEC.md "오류").
+export type InputError = { field: string | null; reason: string }
+
+export class ApiInputError extends Error {
+  errors: InputError[]
+
+  constructor(errors: InputError[]) {
+    super('input error')
+    this.errors = errors
+  }
+}
+
 /** 카드 목록을 서버가 정한 순서(최근 것부터) 그대로 받는다. */
 export async function fetchTasks(): Promise<Task[]> {
   const response = await fetch('/api/tasks')
   if (!response.ok) {
     throw new Error(`GET /api/tasks failed: ${response.status}`)
+  }
+  return response.json()
+}
+
+/** 새 카드를 만든다. 상태는 서버가 TODO로 정한다. */
+export async function createTask(title: string, description: string | null): Promise<Task> {
+  const response = await fetch('/api/tasks', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, description }),
+  })
+  if (response.status === 422) {
+    const body = await response.json()
+    throw new ApiInputError(body.errors ?? [])
+  }
+  if (!response.ok) {
+    throw new Error(`POST /api/tasks failed: ${response.status}`)
   }
   return response.json()
 }

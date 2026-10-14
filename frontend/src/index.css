@@ -15,3 +15,49 @@
   flex: 1;
   min-width: 0;
 }
+
+/* 카드: 제목은 전부 줄바꿈, 설명은 두 줄까지 보이고 넘는 부분은 잘린다 (SCREEN-SPEC.md "S-01 보이는 요소"). */
+.card-title {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.card-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+/* S-02 만들기 창: 보드 위에 띄운다. 창 뒤의 보드를 가리는 배경만 둔다. */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 0.4);
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(480px, calc(100% - 32px));
+  padding: 16px;
+  background: Canvas;
+  color: CanvasText;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 8px;
+}
