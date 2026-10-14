@@ -10,6 +10,16 @@ const titles = (page: Page, name: string) => column(page, name).locator('.card-t
 const card = (page: Page, columnName: string, title: string) =>
   column(page, columnName).locator('.card').filter({ has: page.locator('.card-title', { hasText: title }) })
 const dialog = (page: Page) => page.getByRole('dialog', { name: '카드 만들기' })
+const statusPill = (page: Page, columnName: string, title: string) =>
+  card(page, columnName, title).locator('.status-pill')
+const statusMenu = (page: Page, columnName: string, title: string) =>
+  card(page, columnName, title).getByRole('group', { name: '상태 고르기' })
+
+/** 카드의 상태 표시를 누르고, 메뉴에서 상태를 고른다 (SCREEN-SPEC.md "상태 표시와 상태 메뉴"). */
+async function pickStatus(page: Page, columnName: string, title: string, label: string) {
+  await statusPill(page, columnName, title).click()
+  await statusMenu(page, columnName, title).getByRole('button', { name: label, exact: true }).click()
+}
 const editingCard = (page: Page) => page.locator('.card-editing')
 
 const isApi = (url: URL) => url.pathname.startsWith('/api/')
@@ -68,11 +78,11 @@ test('T-33 수정 실패: 수정 중인 채로 고치던 글이 남고, 새로�
   await expect(titles(page, '할 일')).toHaveText(['보고서 쓰기', '장보기'])
 })
 
-test('T-34 상태 바꾸기 실패 (버튼): 카드가 원래 자리에 있고 실패 문구가 보이며, 새로고침해도 같다', async ({ page }) => {
+test('T-34 상태 바꾸기 실패 (상태 메뉴): 카드가 원래 자리에 있고 실패 문구가 보이며, 새로고침해도 같다', async ({ page }) => {
   await openBoard(page, TWO_TODO_CARDS)
   await stopServer(page)
 
-  await card(page, '할 일', '장보기').getByRole('button', { name: '완료', exact: true }).click()
+  await pickStatus(page, '할 일', '장보기', '완료')
 
   await expect(card(page, '할 일', '장보기').getByText('옮기지 못했습니다. 다시 시도해 주세요.')).toBeVisible()
   await expect(titles(page, '할 일')).toHaveText(['보고서 쓰기', '장보기'])
@@ -87,11 +97,11 @@ test('T-34 상태 바꾸기 실패 (버튼): 카드가 원래 자리에 있고 �
 test('옮기기 실패 뒤 다시 시도해 성공하면 실패 문구가 사라진다', async ({ page }) => {
   await openBoard(page, TWO_TODO_CARDS)
   await stopServer(page)
-  await card(page, '할 일', '장보기').getByRole('button', { name: '완료', exact: true }).click()
+  await pickStatus(page, '할 일', '장보기', '완료')
   await expect(page.getByText('옮기지 못했습니다. 다시 시도해 주세요.')).toBeVisible()
 
   await startServer(page)
-  await card(page, '할 일', '장보기').getByRole('button', { name: '완료', exact: true }).click()
+  await pickStatus(page, '할 일', '장보기', '완료')
 
   await expect(titles(page, '완료')).toHaveText(['장보기'])
   await expect(page.getByText('옮기지 못했습니다. 다시 시도해 주세요.')).toHaveCount(0)
@@ -139,6 +149,7 @@ test('T-43 처음 열 때 목록을 받지 못하면 보드 위에 문구가 보
     await expect(column(page, name).getByRole('heading', { name })).toBeVisible()
   }
   await expect(page.getByText('카드 없음')).toHaveCount(0)
+  await expect(page.locator('.column-count')).toHaveCount(0)
 
   await startServer(page)
   await page.reload()

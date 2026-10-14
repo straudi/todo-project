@@ -67,7 +67,7 @@ test('저장소에 넣어 둔 카드가 GET /api/tasks를 거쳐 상태에 맞�
   await expect(page.getByText('카드 없음')).toHaveCount(0)
 })
 
-test('T-01 빈 보드에서는 세 칸이 가로로 나란히 보이고, 칸마다 "카드 없음"이 보인다', async ({ page }) => {
+test('T-01 빈 보드에서는 세 칸이 가로로 나란히 보이고, 칸마다 개수 0과 "카드 없음"이 보인다', async ({ page }) => {
   seedTasks([])
   await page.goto('/')
 
@@ -76,8 +76,9 @@ test('T-01 빈 보드에서는 세 칸이 가로로 나란히 보이고, 칸마�
     const section = column(page, name)
     await expect(section.getByRole('heading', { name })).toBeVisible()
     await expect(section.locator('.card')).toHaveCount(0)
-    // 칸 안에는 칸 이름과 "카드 없음"만 있다 (카드 개수 없음).
-    await expect(section).toHaveText(`${name}카드 없음`)
+    // 칸 안에는 칸 이름, 개수 0, "카드 없음"만 있다.
+    await expect(section.locator('.column-count')).toHaveText('0')
+    await expect(section).toHaveText(`${name}0카드 없음`)
     boxes.push(await section.boundingBox())
   }
   // 왼쪽부터 할 일 → 진행 중 → 완료, 같은 높이에 나란히.
@@ -147,4 +148,33 @@ test('휴대폰 크기(너비 375px)에서는 세 칸이 세로로 쌓이고, �
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   )
   expect(overflow).toBe(0)
+})
+
+test('T-44 칸별 카드 개수는 만들기, 옮기기, 삭제에 따라 바뀌고, 새로고침해도 같다', async ({ page }) => {
+  seedTasks([
+    { id: 1, title: '장보기', description: null, status: 'TODO', ordered_at: 100 },
+    { id: 2, title: '보고서 쓰기', description: null, status: 'TODO', ordered_at: 200 },
+    { id: 3, title: '청소', description: null, status: 'IN_PROGRESS', ordered_at: 300 },
+  ])
+  await page.goto('/')
+  const counts = page.locator('.column-count')
+  await expect(counts).toHaveText(['2', '1', '0'])
+
+  await page.getByRole('button', { name: '새 카드' }).click()
+  await page.getByRole('dialog').getByLabel('제목').fill('운동')
+  await page.getByRole('dialog').getByRole('button', { name: '만들기' }).click()
+  await expect(counts).toHaveText(['3', '1', '0'])
+
+  const mart = column(page, '할 일').locator('.card').filter({ hasText: '장보기' })
+  await mart.locator('.status-pill').click()
+  await mart.getByRole('group', { name: '상태 고르기' }).getByRole('button', { name: '완료', exact: true }).click()
+  await expect(counts).toHaveText(['2', '1', '1'])
+
+  const cleaning = column(page, '진행 중').locator('.card').filter({ hasText: '청소' })
+  await cleaning.getByRole('button', { name: '삭제' }).click()
+  await cleaning.getByRole('button', { name: '예' }).click()
+  await expect(counts).toHaveText(['2', '0', '1'])
+
+  await page.reload()
+  await expect(counts).toHaveText(['2', '0', '1'])
 })

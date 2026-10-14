@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   changeTaskStatus,
   deleteTask,
@@ -24,6 +24,9 @@ function App() {
   const [loadFailed, setLoadFailed] = useState(false)
   // 카드를 끄는 동안 마우스가 올라간 칸. 그 칸에 테두리를 두른다 (DESIGN.md "부품별 규칙").
   const [dropTarget, setDropTarget] = useState<TaskStatus | null>(null)
+  // 상태 메뉴가 열린 카드. 메뉴는 한 번에 하나만 열린다 (SCREEN-SPEC.md "상태 표시와 상태 메뉴").
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null)
+  const closeMenu = useCallback(() => setOpenMenuId(null), [])
   // 휴대폰은 상태 버튼만 쓴다 (SCREEN-SPEC.md "대안과 결정").
   const [canDrag] = useState(() => window.matchMedia('(pointer: fine)').matches)
 
@@ -138,6 +141,12 @@ function App() {
               <header className="column-header">
                 <column.Icon className="column-icon" size={28} aria-hidden="true" />
                 <h2 className="column-title">{column.label}</h2>
+                {/* 칸별 카드 개수. 목록을 받지 못했으면 보이지 않는다 (PRD.md F-05). */}
+                {!loadFailed && (
+                  <span className="column-count" aria-label={`카드 ${columnTasks.length}장`}>
+                    {columnTasks.length}
+                  </span>
+                )}
               </header>
               {/* 카드가 없는 칸의 문구는 PRD.md F-05를 따른다. 목록을 받지 못했으면 보이지 않는다. */}
               {columnTasks.length === 0 && !loadFailed && <p className="column-empty">카드 없음</p>}
@@ -148,6 +157,11 @@ function App() {
                   moving={movingIds.has(task.id)}
                   moveFailed={moveFailedIds.has(task.id)}
                   canDrag={canDrag}
+                  menuOpen={openMenuId === task.id}
+                  onMenuToggle={() =>
+                    setOpenMenuId((current) => (current === task.id ? null : task.id))
+                  }
+                  onMenuClose={closeMenu}
                   onMove={(status) => void moveTask(task, status)}
                   onSave={(title, description) => saveTask(task, title, description)}
                   onDelete={() => removeTask(task)}

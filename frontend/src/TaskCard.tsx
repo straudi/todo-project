@@ -2,13 +2,13 @@ import { Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { ApiInputError, type Task, type TaskStatus } from './api'
 import { AutoGrowTextarea } from './AutoGrowTextarea'
-import { COLUMNS } from './columns'
 import {
   DELETE_FAILED_MESSAGE,
   MOVE_FAILED_MESSAGE,
   SAVE_FAILED_MESSAGE,
   TITLE_EMPTY_MESSAGE,
 } from './messages'
+import { StatusMenu } from './StatusMenu'
 
 type Props = {
   task: Task
@@ -16,8 +16,12 @@ type Props = {
   moving: boolean
   /** 마지막 상태 바꾸기가 실패했다. 다시 시도하면 false가 된다. */
   moveFailed: boolean
-  /** 마우스처럼 정밀한 포인터가 있는 기기에서만 끌 수 있다 (휴대폰은 상태 버튼만). */
+  /** 마우스처럼 정밀한 포인터가 있는 기기에서만 끌 수 있다 (휴대폰은 상태 메뉴만). */
   canDrag: boolean
+  /** 이 카드의 상태 메뉴가 열려 있다. 메뉴는 한 번에 하나만 열린다. */
+  menuOpen: boolean
+  onMenuToggle: () => void
+  onMenuClose: () => void
   onMove: (status: TaskStatus) => void
   /** 성공하면 끝나고, 실패하면 오류를 던진다. */
   onSave: (title: string, description: string | null) => Promise<void>
@@ -35,6 +39,9 @@ export function TaskCard({
   moving,
   moveFailed,
   canDrag,
+  menuOpen,
+  onMenuToggle,
+  onMenuClose,
   onMove,
   onSave,
   onDelete,
@@ -53,6 +60,7 @@ export function TaskCard({
   const [dragging, setDragging] = useState(false)
 
   function startEdit() {
+    onMenuClose()
     setTitle(task.title)
     // 수정할 때는 설명 전체가 보인다 (SCREEN-SPEC.md "S-01 보이는 요소").
     setDescription(task.description ?? '')
@@ -182,22 +190,19 @@ export function TaskCard({
               {MOVE_FAILED_MESSAGE}
             </p>
           )}
-          {/* 카드 아래 줄: 상태 버튼, 수정, 삭제 (DESIGN.md "부품별 규칙"). */}
+          {/* 카드 아래 줄: 상태 표시, 수정, 삭제 (DESIGN.md "부품별 규칙"). */}
           <div className="card-footer">
-            <div className="card-status-buttons">
-              {/* 상태 버튼은 세 개 모두 보이고, 지금 상태 버튼은 누를 수 없다 (SCREEN-SPEC.md "S-01 보이는 요소"). */}
-              {COLUMNS.map((column) => (
-                <button
-                  key={column.status}
-                  type="button"
-                  data-current={column.status === task.status || undefined}
-                  disabled={moving || column.status === task.status}
-                  onClick={() => onMove(column.status)}
-                >
-                  {column.label}
-                </button>
-              ))}
-            </div>
+            <StatusMenu
+              status={task.status}
+              open={menuOpen}
+              disabled={moving}
+              onToggle={onMenuToggle}
+              onClose={onMenuClose}
+              onPick={(status) => {
+                onMenuClose()
+                onMove(status)
+              }}
+            />
             {/* 아이콘만 보이는 버튼에도 "수정", "삭제"라는 이름을 붙인다 (DESIGN.md "아이콘"). */}
             <button
               type="button"
@@ -212,7 +217,10 @@ export function TaskCard({
               type="button"
               className="icon-button icon-button-danger"
               aria-label="삭제"
-              onClick={() => setMode('confirmDelete')}
+              onClick={() => {
+                onMenuClose()
+                setMode('confirmDelete')
+              }}
               disabled={moving}
             >
               <Trash2 size={20} aria-hidden="true" />
