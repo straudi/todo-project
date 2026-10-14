@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Literal
@@ -8,7 +9,13 @@ from pydantic import BaseModel
 from .storage import Storage
 
 # 저장소 파일 위치는 ARCHITECTURE.md "기술과 실행 환경"을 따른다.
-DEFAULT_DB_PATH = Path(__file__).resolve().parent.parent / "data" / "tasks.db"
+# 브라우저 테스트는 TASKS_DB_PATH로 테스트용 파일을 가리킨다.
+DEFAULT_DB_PATH = Path(
+    os.environ.get(
+        "TASKS_DB_PATH",
+        Path(__file__).resolve().parent.parent / "data" / "tasks.db",
+    )
+)
 
 
 class Task(BaseModel):
