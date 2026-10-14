@@ -20,6 +20,23 @@ export class ApiInputError extends Error {
   }
 }
 
+/** 이미 지워진 카드에 대한 요청 (404 TASK_NOT_FOUND). 다른 기기에서 지웠을 수 있다. */
+export class TaskNotFoundError extends Error {
+  constructor() {
+    super('task not found')
+  }
+}
+
+async function throwIfTaskNotFound(response: Response): Promise<void> {
+  if (response.status !== 404) {
+    return
+  }
+  const body = await response.json().catch(() => null)
+  if (body?.errors?.some((e: InputError) => e.reason === 'TASK_NOT_FOUND')) {
+    throw new TaskNotFoundError()
+  }
+}
+
 /** 카드 목록을 서버가 정한 순서(최근 것부터) 그대로 받는다. */
 export async function fetchTasks(): Promise<Task[]> {
   const response = await fetch('/api/tasks')
@@ -53,6 +70,7 @@ export async function changeTaskStatus(id: number, status: TaskStatus): Promise<
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ status }),
   })
+  await throwIfTaskNotFound(response)
   if (!response.ok) {
     throw new Error(`PATCH /api/tasks/${id}/status failed: ${response.status}`)
   }
@@ -70,6 +88,7 @@ export async function updateTask(id: number, title: string, description: string 
     const body = await response.json()
     throw new ApiInputError(body.errors ?? [])
   }
+  await throwIfTaskNotFound(response)
   if (!response.ok) {
     throw new Error(`PATCH /api/tasks/${id} failed: ${response.status}`)
   }
@@ -79,6 +98,7 @@ export async function updateTask(id: number, title: string, description: string 
 /** 카드를 지운다. 성공 응답(204)에는 본문이 없다. */
 export async function deleteTask(id: number): Promise<void> {
   const response = await fetch(`/api/tasks/${id}`, { method: 'DELETE' })
+  await throwIfTaskNotFound(response)
   if (!response.ok) {
     throw new Error(`DELETE /api/tasks/${id} failed: ${response.status}`)
   }

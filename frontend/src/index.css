@@ -339,6 +339,24 @@ textarea:focus-visible {
   margin-top: 16px;
 }
 
+/* 보드 위 안내 (이미 지워진 카드): 실패 문구와 같은 모양에 닫기 버튼 (DESIGN.md "부품별 규칙") */
+.board-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 8px 8px 8px 12px;
+  border-radius: 8px;
+  background: var(--color-message-bg);
+  color: var(--color-danger);
+  font-size: 14px;
+}
+
+.board-notice p {
+  margin: 0;
+}
+
 /* S-02 만들기 창: 보드 위에 띄운다. */
 .dialog-backdrop {
   position: fixed;

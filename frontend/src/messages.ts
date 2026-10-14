@@ -6,3 +6,6 @@ export const SAVE_FAILED_MESSAGE = '저장하지 못했습니다. 다시 시도�
 export const MOVE_FAILED_MESSAGE = '옮기지 못했습니다. 다시 시도해 주세요.'
 export const DELETE_FAILED_MESSAGE = '지우지 못했습니다. 다시 시도해 주세요.'
 export const LOAD_FAILED_MESSAGE = '카드를 불러오지 못했습니다. 새로고침해 주세요.'
+
+// 이미 지워진 카드를 고치거나 옮기려 했을 때 보드 위에 보인다 (SCREEN-SPEC.md "대안과 결정").
+export const DELETED_ELSEWHERE_MESSAGE = '이미 지워진 카드입니다. 다른 기기에서 지웠을 수 있습니다.'

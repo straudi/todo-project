@@ -4,12 +4,13 @@ import {
   changeTaskStatus,
   deleteTask,
   fetchTasks,
+  TaskNotFoundError,
   updateTask,
   type Task,
   type TaskStatus,
 } from './api'
 import { COLUMNS } from './columns'
-import { LOAD_FAILED_MESSAGE } from './messages'
+import { DELETED_ELSEWHERE_MESSAGE, LOAD_FAILED_MESSAGE } from './messages'
 import { CreateTaskDialog } from './CreateTaskDialog'
 import { TaskCard } from './TaskCard'
 
@@ -27,6 +28,8 @@ function App() {
   // 상태 메뉴가 열린 카드. 메뉴는 한 번에 하나만 열린다 (SCREEN-SPEC.md "상태 표시와 상태 메뉴").
   const [openMenuId, setOpenMenuId] = useState<number | null>(null)
   const closeMenu = useCallback(() => setOpenMenuId(null), [])
+  // 이미 지워진 카드를 건드렸을 때 보드 위에 보이는 안내. "닫기"로 닫는다.
+  const [deletedElsewhere, setDeletedElsewhere] = useState(false)
   // 휴대폰은 상태 버튼만 쓴다 (SCREEN-SPEC.md "대안과 결정").
   const [canDrag] = useState(() => window.matchMedia('(pointer: fine)').matches)
 
@@ -45,6 +48,13 @@ function App() {
     setCreating(false)
   }
 
+  // 서버가 "그 카드가 없다"고 알려 주면(다른 기기에서 지움) 화면에서도 그 카드를 뺀다.
+  function dropFromBoard(id: number) {
+    setTasks((previous) => previous.filter((t) => t.id !== id))
+    setOpenMenuId((current) => (current === id ? null : current))
+    setMoveFailedIds((previous) => withoutId(previous, id))
+  }
+
   async function moveTask(task: Task, status: TaskStatus) {
     // 원래 칸으로는 보내지 않는다. 자리도 그대로다 (API-SPEC.md "API 계약 결정 기록").
     if (task.status === status || movingIds.has(task.id)) {
@@ -56,7 +66,12 @@ function App() {
       const moved = await changeTaskStatus(task.id, status)
       // 서버가 성공을 알린 뒤에 카드를 새 칸 맨 위에 놓는다.
       setTasks((previous) => [moved, ...previous.filter((t) => t.id !== moved.id)])
-    } catch {
+    } catch (error) {
+      if (error instanceof TaskNotFoundError) {
+        dropFromBoard(task.id)
+        setDeletedElsewhere(true)
+        return
+      }
       // 실패하면 카드는 원래 칸, 원래 자리에 있고, 카드 안에 실패 문구가 보인다.
       setMoveFailedIds((previous) => new Set(previous).add(task.id))
     } finally {
@@ -65,14 +80,32 @@ function App() {
   }
 
   async function saveTask(task: Task, title: string, description: string | null) {
-    const updated = await updateTask(task.id, title, description)
+    let updated: Task
+    try {
+      updated = await updateTask(task.id, title, description)
+    } catch (error) {
+      if (error instanceof TaskNotFoundError) {
+        // 저장할 카드가 없으므로 고치던 글과 함께 카드를 뺀다.
+        dropFromBoard(task.id)
+        setDeletedElsewhere(true)
+        return
+      }
+      throw error
+    }
     // 내용만 고친 카드는 칸 안의 자리가 바뀌지 않는다 (PRD.md F-02).
     setTasks((previous) => previous.map((t) => (t.id === updated.id ? updated : t)))
   }
 
   async function removeTask(task: Task) {
-    await deleteTask(task.id)
-    setTasks((previous) => previous.filter((t) => t.id !== task.id))
+    try {
+      await deleteTask(task.id)
+    } catch (error) {
+      // 이미 지워져 있으면 지우려던 결과가 이루어진 것이므로, 안내 없이 카드만 뺀다.
+      if (!(error instanceof TaskNotFoundError)) {
+        throw error
+      }
+    }
+    dropFromBoard(task.id)
   }
 
   // 칸에 들어오거나 칸 위에 있으면 그 칸에 테두리를 두른다.
@@ -121,6 +154,14 @@ function App() {
         <p role="alert" className="action-error">
           {LOAD_FAILED_MESSAGE}
         </p>
+      )}
+      {deletedElsewhere && (
+        <div role="status" className="board-notice">
+          <p>{DELETED_ELSEWHERE_MESSAGE}</p>
+          <button type="button" onClick={() => setDeletedElsewhere(false)}>
+            닫기
+          </button>
+        </div>
       )}
       <div className="columns">
         {COLUMNS.map((column) => {
