@@ -142,3 +142,16 @@ test('T-08 (보드 부분) 긴 제목은 전부 줄바꿈되어 보이고, 긴 �
   expect(descriptionBox.visibleLines).toBe(2)
   expect(descriptionBox.clipped).toBe(true)
 })
+
+test('만들기 창의 설명칸은 내용에 맞춰 늘어나 스크롤 없이 전체가 보인다', async ({ page }) => {
+  // SCREEN-SPEC.md "대안과 결정"의 "설명칸 높이". 수정 중 설명칸은 edit-delete.spec.ts의 T-08에서 확인한다.
+  const longDescription = Array.from({ length: 8 }, (_, i) => `${i + 1}번째 줄`).join('\n')
+
+  await openCreateDialog(page)
+  const descriptionField = dialog(page).getByLabel('설명')
+  await descriptionField.fill(longDescription)
+
+  await expect(descriptionField).toHaveValue(longDescription)
+  const clipped = await descriptionField.evaluate((element) => element.scrollHeight > element.clientHeight)
+  expect(clipped).toBe(false)
+})

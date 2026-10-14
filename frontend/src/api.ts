@@ -58,3 +58,28 @@ export async function changeTaskStatus(id: number, status: TaskStatus): Promise<
   }
   return response.json()
 }
+
+/** 카드의 제목과 설명을 고친다. 상태와 칸 안 자리는 그대로다. */
+export async function updateTask(id: number, title: string, description: string | null): Promise<Task> {
+  const response = await fetch(`/api/tasks/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, description }),
+  })
+  if (response.status === 422) {
+    const body = await response.json()
+    throw new ApiInputError(body.errors ?? [])
+  }
+  if (!response.ok) {
+    throw new Error(`PATCH /api/tasks/${id} failed: ${response.status}`)
+  }
+  return response.json()
+}
+
+/** 카드를 지운다. 성공 응답(204)에는 본문이 없다. */
+export async function deleteTask(id: number): Promise<void> {
+  const response = await fetch(`/api/tasks/${id}`, { method: 'DELETE' })
+  if (!response.ok) {
+    throw new Error(`DELETE /api/tasks/${id} failed: ${response.status}`)
+  }
+}

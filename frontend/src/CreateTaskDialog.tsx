@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { ApiInputError, createTask, type Task } from './api'
-
-// 안내 문구는 SCREEN-SPEC.md "대안과 결정"을 따른다.
-const TITLE_EMPTY_MESSAGE = '제목을 입력해 주세요.'
+import { AutoGrowTextarea } from './AutoGrowTextarea'
+import { TITLE_EMPTY_MESSAGE } from './messages'
 
 type Props = {
   onCreated: (task: Task) => void
@@ -54,7 +53,7 @@ export function CreateTaskDialog({ onCreated, onCancel }: Props) {
         )}
         <label className="field">
           설명
-          <textarea rows={5} value={description} onChange={(e) => setDescription(e.target.value)} />
+          <AutoGrowTextarea rows={5} value={description} onChange={(e) => setDescription(e.target.value)} />
         </label>
         <div className="dialog-actions">
           <button type="button" onClick={handleCreate} disabled={submitting}>

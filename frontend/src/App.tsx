@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react'
-import { changeTaskStatus, fetchTasks, type Task, type TaskStatus } from './api'
+import {
+  changeTaskStatus,
+  deleteTask,
+  fetchTasks,
+  updateTask,
+  type Task,
+  type TaskStatus,
+} from './api'
 import { COLUMNS } from './columns'
 import { CreateTaskDialog } from './CreateTaskDialog'
 import { TaskCard } from './TaskCard'
@@ -46,6 +53,17 @@ function App() {
     }
   }
 
+  async function saveTask(task: Task, title: string, description: string | null) {
+    const updated = await updateTask(task.id, title, description)
+    // 내용만 고친 카드는 칸 안의 자리가 바뀌지 않는다 (PRD.md F-02).
+    setTasks((previous) => previous.map((t) => (t.id === updated.id ? updated : t)))
+  }
+
+  async function removeTask(task: Task) {
+    await deleteTask(task.id)
+    setTasks((previous) => previous.filter((t) => t.id !== task.id))
+  }
+
   function handleDrop(event: React.DragEvent, status: TaskStatus) {
     event.preventDefault()
     const id = Number(event.dataTransfer.getData('text/plain'))
@@ -83,6 +101,8 @@ function App() {
                   moving={movingIds.has(task.id)}
                   canDrag={canDrag}
                   onMove={(status) => void moveTask(task, status)}
+                  onSave={(title, description) => saveTask(task, title, description)}
+                  onDelete={() => removeTask(task)}
                 />
               ))}
             </section>

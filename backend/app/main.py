@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any, Literal
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -30,6 +30,12 @@ class Task(BaseModel):
 
 class TaskCreate(BaseModel):
     # status, id, ordered_at 같은 다른 필드는 무시한다 (API-SPEC.md "API 계약 결정 기록").
+    title: str | None = None
+    description: str | None = None
+
+
+class TaskUpdate(BaseModel):
+    # 보낸 필드만 바꾸고, 빠진 필드는 그대로 둔다 (API-SPEC.md "API 계약 결정 기록").
     title: str | None = None
     description: str | None = None
 
@@ -114,6 +120,24 @@ def create_app(db_path: Path = DEFAULT_DB_PATH) -> FastAPI:
         title = clean_title(body.title)
         description = clean_description(body.description)
         return storage.create_task(title, description)
+
+    @app.patch("/api/tasks/{task_id}")
+    def update_task(task_id: int, body: TaskUpdate) -> Task:
+        changes = {}
+        if "title" in body.model_fields_set:
+            changes["title"] = clean_title(body.title)
+        if "description" in body.model_fields_set:
+            changes["description"] = clean_description(body.description)
+        task = storage.update_task(task_id, changes)
+        if task is None:
+            raise TaskNotFound()
+        return task
+
+    @app.delete("/api/tasks/{task_id}", status_code=204)
+    def delete_task(task_id: int) -> Response:
+        if not storage.delete_task(task_id):
+            raise TaskNotFound()
+        return Response(status_code=204)
 
     @app.patch("/api/tasks/{task_id}/status")
     def change_status(task_id: int, body: StatusChange) -> Task:

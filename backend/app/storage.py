@@ -60,6 +60,30 @@ class Storage:
             ).fetchone()
         return dict(row)
 
+    def update_task(self, task_id: int, changes: dict) -> dict | None:
+        """제목과 설명 중 받은 것만 바꾼다. 상태와 순서 기준 시각은 그대로 둔다.
+
+        없는 카드면 None을 돌려준다.
+        """
+        columns = [name for name in ("title", "description") if name in changes]
+        with closing(self._connect()) as conn, conn:
+            if columns:
+                assignments = ", ".join(f"{name} = ?" for name in columns)
+                conn.execute(
+                    f"UPDATE tasks SET {assignments} WHERE id = ?",
+                    [changes[name] for name in columns] + [task_id],
+                )
+            row = conn.execute(
+                "SELECT id, title, description, status FROM tasks WHERE id = ?", (task_id,)
+            ).fetchone()
+        return dict(row) if row is not None else None
+
+    def delete_task(self, task_id: int) -> bool:
+        """카드를 지운다. 없는 카드면 False를 돌려준다."""
+        with closing(self._connect()) as conn, conn:
+            cursor = conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+        return cursor.rowcount > 0
+
     def create_task(self, title: str, description: str | None) -> dict:
         """새 카드는 항상 TODO로, 순서 기준 시각은 지금으로 정한다."""
         ordered_at = time.time_ns() // 1000
