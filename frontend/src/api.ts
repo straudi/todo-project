@@ -45,3 +45,16 @@ export async function createTask(title: string, description: string | null): Pro
   }
   return response.json()
 }
+
+/** 카드를 다른 상태로 옮긴다. 서버가 순서 기준 시각을 정한다. */
+export async function changeTaskStatus(id: number, status: TaskStatus): Promise<Task> {
+  const response = await fetch(`/api/tasks/${id}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  })
+  if (!response.ok) {
+    throw new Error(`PATCH /api/tasks/${id}/status failed: ${response.status}`)
+  }
+  return response.json()
+}

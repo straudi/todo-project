@@ -1,7 +1,7 @@
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -32,6 +32,18 @@ class TaskCreate(BaseModel):
     # status, id, ordered_at 같은 다른 필드는 무시한다 (API-SPEC.md "API 계약 결정 기록").
     title: str | None = None
     description: str | None = None
+
+
+class StatusChange(BaseModel):
+    # 세 값이 아니면 빈 글자, null, 없음, 다른 종류의 값 모두 INVALID_STATUS로 거절한다.
+    status: Any = None
+
+
+TASK_STATUSES = ("TODO", "IN_PROGRESS", "DONE")
+
+
+class TaskNotFound(Exception):
+    """없는 카드. 404와 {"errors": [{"field": null, "reason": "TASK_NOT_FOUND"}]}로 돌려준다."""
 
 
 class InputError(Exception):
@@ -74,6 +86,13 @@ def create_app(db_path: Path = DEFAULT_DB_PATH) -> FastAPI:
     async def handle_input_error(request: Request, error: InputError) -> JSONResponse:
         return input_errors_response([{"field": error.field, "reason": error.reason}])
 
+    @app.exception_handler(TaskNotFound)
+    async def handle_task_not_found(request: Request, error: TaskNotFound) -> JSONResponse:
+        return JSONResponse(
+            status_code=404,
+            content={"errors": [{"field": None, "reason": "TASK_NOT_FOUND"}]},
+        )
+
     @app.exception_handler(RequestValidationError)
     async def handle_validation_error(
         request: Request, error: RequestValidationError
@@ -95,6 +114,15 @@ def create_app(db_path: Path = DEFAULT_DB_PATH) -> FastAPI:
         title = clean_title(body.title)
         description = clean_description(body.description)
         return storage.create_task(title, description)
+
+    @app.patch("/api/tasks/{task_id}/status")
+    def change_status(task_id: int, body: StatusChange) -> Task:
+        if body.status not in TASK_STATUSES:
+            raise InputError("status", "INVALID_STATUS")
+        task = storage.change_status(task_id, body.status)
+        if task is None:
+            raise TaskNotFound()
+        return task
 
     return app
 

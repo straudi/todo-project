@@ -41,6 +41,25 @@ class Storage:
             ).fetchall()
         return [dict(row) for row in rows]
 
+    def change_status(self, task_id: int, status: str) -> dict | None:
+        """다른 상태로 옮기면 순서 기준 시각을 지금으로 바꾼다. 같은 상태면 아무것도 바꾸지 않는다.
+
+        없는 카드면 None을 돌려준다.
+        """
+        with closing(self._connect()) as conn, conn:
+            row = conn.execute("SELECT status FROM tasks WHERE id = ?", (task_id,)).fetchone()
+            if row is None:
+                return None
+            if row["status"] != status:
+                conn.execute(
+                    "UPDATE tasks SET status = ?, ordered_at = ? WHERE id = ?",
+                    (status, time.time_ns() // 1000, task_id),
+                )
+            row = conn.execute(
+                "SELECT id, title, description, status FROM tasks WHERE id = ?", (task_id,)
+            ).fetchone()
+        return dict(row)
+
     def create_task(self, title: str, description: str | None) -> dict:
         """새 카드는 항상 TODO로, 순서 기준 시각은 지금으로 정한다."""
         ordered_at = time.time_ns() // 1000

@@ -94,16 +94,16 @@
 
 ### 화면을 거치지 않고 서버에 직접 보낸 잘못된 요청
 
-응답 번호와 거절 이유 이름을 확인한다. 결정된 것은 빈 제목의 422와 칸별 오류, 없는 카드의 거절 이유 이름 TASK_NOT_FOUND, 필드 이름(title, status, [DATA-MODEL.md](DATA-MODEL.md) "데이터 규칙 결정 기록"), 빈 제목의 거절 이유 이름 TITLE_EMPTY와 오류 본문 모양 `{"errors": [{"field", "reason"}]}` ([API-SPEC.md](API-SPEC.md) "API 계약 결정 기록", 2026-10-14)이다. 그 밖의 거절 이유 이름, 상태 바꾸기 주소를 `/status`로 따로 둘지, "(AI 제안)"이 붙은 응답 번호는 확정되지 않았다.
+응답 번호와 거절 이유 이름을 확인한다. 결정된 것은 빈 제목의 422와 칸별 오류, 없는 카드의 404와 거절 이유 이름 TASK_NOT_FOUND, 세 값이 아닌 상태의 422와 INVALID_STATUS, 상태 바꾸기 주소 `/status` (2026-10-14), 필드 이름(title, status, [DATA-MODEL.md](DATA-MODEL.md) "데이터 규칙 결정 기록"), 빈 제목의 거절 이유 이름 TITLE_EMPTY와 오류 본문 모양 `{"errors": [{"field", "reason"}]}` ([API-SPEC.md](API-SPEC.md) "API 계약 결정 기록", 2026-10-14)이다. 그 밖의 거절 이유 이름은 확정되지 않았다.
 
 | 시나리오 | 시작 조건과 입력 | 행동 | 기대 결과 | 관련 요구와 설계 | 자동 테스트 (AI 제안) |
 | --- | --- | --- | --- | --- | --- |
 | T-37 빈 제목으로 만들기 | 보드의 카드 수를 세어 둔다. 본문 `{"title": "", "description": null}` | `POST /api/tasks`로 보낸다. 그다음 앱을 새로고침한다. | 응답 번호 422가 온다. 응답 안에 title 필드와 TITLE_EMPTY가 보인다. 새로고침해도 보드의 카드 수는 세어 둔 수와 같다. | ARCHITECTURE "서버: 입력 검사", API-SPEC "오류" | pytest |
 | T-38 공백만 넣은 제목으로 만들기 | 본문의 title을 띄어쓰기만(`"   "`), 탭만(`"\t"`), 줄바꿈만(`"\n"`), 섞어서(`" \t\n"`) 네 가지로, description은 null | `POST /api/tasks`로 하나씩 보낸다. 그다음 앱을 새로고침한다. | T-37과 같다. | ARCHITECTURE "서버: 입력 검사", API-SPEC "오류" | pytest |
 | T-39 빈 제목으로 수정 | 보드에 "보고서 쓰기" 카드가 있다. 본문 `{"title": "  ", "description": null}` | 이 카드의 `PATCH /api/tasks/{id}`로 보낸다. 그다음 앱을 새로고침한다. | 응답 번호 422가 오고, 응답 안에 title 필드와 TITLE_EMPTY가 보인다. 새로고침하면 "보고서 쓰기"가 원래 칸, 원래 자리에 원래 설명과 함께 보인다. | ARCHITECTURE "서버: 입력 검사", API-SPEC "오류" | pytest |
-| T-40 세 값이 아닌 상태 값 | "할 일" 칸에 카드가 있다. 본문 `{"status": "ARCHIVED"}`, `{"status": "done"}`, `{"status": "완료"}` | 그 카드의 `PATCH /api/tasks/{id}/status`로 하나씩 보낸다. 그다음 앱을 새로고침한다. | 세 번 모두 응답 번호 422 (AI 제안)가 오고, 응답 안에 status 필드와 INVALID_STATUS (AI 제안)가 보인다. 새로고침하면 카드는 "할 일" 칸의 원래 자리에 있다. | DATA-MODEL "상태 값", API-SPEC "오류" | pytest |
-| T-41 빈 상태 값 | "할 일" 칸에 카드가 있다. 본문 `{"status": ""}`, `{"status": null}` | 그 카드의 `PATCH /api/tasks/{id}/status`로 하나씩 보낸다. 그다음 앱을 새로고침한다. | 두 번 모두 응답 번호 422 (AI 제안)가 오고, 응답 안에 status 필드가 보인다. 새로고침하면 카드는 "할 일" 칸의 원래 자리에 있다. | API-SPEC "카드 필드" (status 비어 있으면 안 됨) | pytest |
-| T-42 없는 카드 | 저장된 카드에 없는 번호 (예: 99999) | 이 번호로 `PATCH /api/tasks/99999`, `PATCH /api/tasks/99999/status`, `DELETE /api/tasks/99999`를 하나씩 보낸다. 그다음 앱을 새로고침한다. | 세 번 모두 응답 번호 404 (AI 제안)가 오고, 응답 안에 TASK_NOT_FOUND가 보인다. 새로고침해도 보드는 보내기 전과 같다. | ARCHITECTURE "실패 흐름", API-SPEC "오류" | pytest |
+| T-40 세 값이 아닌 상태 값 | "할 일" 칸에 카드가 있다. 본문 `{"status": "ARCHIVED"}`, `{"status": "done"}`, `{"status": "완료"}` | 그 카드의 `PATCH /api/tasks/{id}/status`로 하나씩 보낸다. 그다음 앱을 새로고침한다. | 세 번 모두 응답 번호 422가 오고, 응답 안에 status 필드와 INVALID_STATUS가 보인다. 새로고침하면 카드는 "할 일" 칸의 원래 자리에 있다. | DATA-MODEL "상태 값", API-SPEC "오류" | pytest |
+| T-41 빈 상태 값 | "할 일" 칸에 카드가 있다. 본문 `{"status": ""}`, `{"status": null}` | 그 카드의 `PATCH /api/tasks/{id}/status`로 하나씩 보낸다. 그다음 앱을 새로고침한다. | 두 번 모두 응답 번호 422가 오고, 응답 안에 status 필드와 INVALID_STATUS가 보인다. 새로고침하면 카드는 "할 일" 칸의 원래 자리에 있다. | API-SPEC "카드 필드" (status 비어 있으면 안 됨) | pytest |
+| T-42 없는 카드 | 저장된 카드에 없는 번호 (예: 99999) | 이 번호로 `PATCH /api/tasks/99999`, `PATCH /api/tasks/99999/status`, `DELETE /api/tasks/99999`를 하나씩 보낸다. 그다음 앱을 새로고침한다. | 세 번 모두 응답 번호 404가 오고, 응답 안에 TASK_NOT_FOUND가 보인다. 새로고침해도 보드는 보내기 전과 같다. | ARCHITECTURE "실패 흐름", API-SPEC "오류" | pytest |
 
 ## PRD 기능별 시나리오
 
@@ -128,8 +128,8 @@
 
 | 항목 | 내용 | 정할 곳 |
 | --- | --- | --- |
-| 처리 중 상태 | 서버 응답을 기다리는 동안 화면에 무엇이 보이는지. 만들기는 정했다 (SCREEN-SPEC "대안과 결정"). 확인하려면 서버 응답을 늦춰야 해서 시나리오는 아직 없다 | [SCREEN-SPEC.md](SCREEN-SPEC.md) "미정" (수정·옮기기·삭제) |
-| 처리 중에 다시 누르기 | 응답을 기다리는 동안 다시 누를 때. 만들기는 정했다 (SCREEN-SPEC "대안과 결정"). 확인하려면 서버 응답을 늦춰야 해서 시나리오는 아직 없다 | [SCREEN-SPEC.md](SCREEN-SPEC.md) "미정" (저장·옮기기·삭제) |
+| 처리 중 상태 | 서버 응답을 기다리는 동안 화면에 무엇이 보이는지. 만들기와 옮기기는 정했다 (SCREEN-SPEC "대안과 결정"). 확인하려면 서버 응답을 늦춰야 해서 시나리오는 아직 없다 | [SCREEN-SPEC.md](SCREEN-SPEC.md) "미정" (수정·삭제) |
+| 처리 중에 다시 누르기 | 응답을 기다리는 동안 다시 누를 때. 만들기와 옮기기는 정했다 (SCREEN-SPEC "대안과 결정"). 확인하려면 서버 응답을 늦춰야 해서 시나리오는 아직 없다 | [SCREEN-SPEC.md](SCREEN-SPEC.md) "미정" (저장·삭제) |
 | 처리 중에 화면이 미리 바뀌지 않는지 | ARCHITECTURE "화면은 서버가 성공을 알린 뒤에 바뀐다"를 확인하려면 서버 응답을 늦춰야 한다. 늦추는 방법이 정해지지 않았다. | 이 문서 (서버 답을 늦추는 방법을 정한 뒤) |
 | 처음 열 때 목록을 받지 못함 | 서버가 꺼진 채로 앱을 열 때 화면 | [SCREEN-SPEC.md](SCREEN-SPEC.md) "미정" |
 | 실패 알림 문구 | 만들기, 수정, 옮기기, 삭제가 실패했을 때 알릴지, 어떻게 알릴지 | [SCREEN-SPEC.md](SCREEN-SPEC.md) "미정" |

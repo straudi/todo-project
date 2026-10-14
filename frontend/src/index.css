@@ -67,3 +67,9 @@
   display: flex;
   gap: 8px;
 }
+
+.card-status-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
