@@ -137,10 +137,7 @@ function App() {
             >
               <header className="column-header">
                 <column.Icon className="column-icon" size={28} aria-hidden="true" />
-                <div>
-                  <h2 className="column-title">{column.label}</h2>
-                  <p className="column-description">{column.description}</p>
-                </div>
+                <h2 className="column-title">{column.label}</h2>
               </header>
               {/* 카드가 없는 칸의 문구는 PRD.md F-05를 따른다. 목록을 받지 못했으면 보이지 않는다. */}
               {columnTasks.length === 0 && !loadFailed && <p className="column-empty">카드 없음</p>}

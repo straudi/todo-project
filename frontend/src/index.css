@@ -77,10 +77,10 @@ body {
   outline-offset: -2px;
 }
 
-/* 칸 머리: 아이콘, 칸 이름, 칸 설명 */
+/* 칸 머리: 아이콘, 칸 이름 */
 .column-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   margin-bottom: 4px;
 }
@@ -98,7 +98,6 @@ body {
   color: var(--column-accent);
 }
 
-.column-description,
 .column-empty {
   margin: 0;
   font-size: 14px;
