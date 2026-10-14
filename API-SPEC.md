@@ -18,11 +18,11 @@
 
 | 사용자 행동 | 엔드포인트 | 서버가 할 일 | 성공하면 화면 | 실패 종류 | 실패하면 화면 | 사용자의 다음 행동 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 목록 보기 (앱 열기, 새로고침) F-05, F-06 | `GET /api/tasks` | 모든 카드를 ordered_at이 늦은 것부터 돌려준다. | 세 칸에 상태별로 놓인다. 칸 안에서는 최근 카드가 맨 위다. | 서버에 닿지 못함, STORAGE_FAILED | 미정 (SCREEN-SPEC "미정") | 새로고침 |
-| 새 카드 만들기 (S-02에서 만들기) F-01, F-07 | `POST /api/tasks` | title을 검사한다. status를 TODO로, id와 ordered_at을 정해 저장한다. | 창이 닫히고, 카드가 "할 일" 칸 맨 위에 생긴다. | 빈 제목 (화면이 막음), TITLE_EMPTY (422, title 칸 오류), 서버에 닿지 못함, STORAGE_FAILED | 빈 제목: 창 안에 안내 문구, 적은 설명은 남음. 그 밖: 창이 열린 채 쓴 내용 유지 ([D-008](DECISIONS.md)). 실패 알림은 미정 | 만들기 다시 누르기, 취소 |
-| 내용 수정 (수정 → 저장) F-02, F-07 | `PATCH /api/tasks/{id}` | title을 검사한다. title과 description만 바꾼다. status와 ordered_at은 그대로 둔다. | 내용이 바뀐다. 칸 안 자리는 그대로다. | 빈 제목 (화면이 막음), TITLE_EMPTY (422, title 칸 오류), TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 빈 제목: 안내 문구. 그 밖: 카드는 원래 내용이고, 수정 중인 채로 고치던 글이 남는다 (SCREEN-SPEC "대안과 결정"). 실패 알림은 미정 | 저장 다시 누르기, 취소 |
-| 상태 바꾸기 (상태 버튼, 다른 칸에 끌어다 놓기) F-04 | `PATCH /api/tasks/{id}/status` | status를 검사한다. 바꾼 뒤 ordered_at을 지금으로 정한다. | 카드가 새 칸 맨 위에 놓인다. | INVALID_STATUS, TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 카드는 원래 칸, 원래 자리. 실패 알림은 미정 | 다시 누르거나 끌기, 새로고침 |
-| 삭제 ("정말 지울까요?"에서 "예") F-03 | `DELETE /api/tasks/{id}` | 카드를 저장소에서 지운다. | 카드가 사라진다. | TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 카드가 남는다. 실패 알림은 미정 | 삭제 다시 누르기, 새로고침 |
+| 목록 보기 (앱 열기, 새로고침) F-05, F-06 | `GET /api/tasks` | 모든 카드를 ordered_at이 늦은 것부터 돌려준다. | 세 칸에 상태별로 놓인다. 칸 안에서는 최근 카드가 맨 위다. | 서버에 닿지 못함, STORAGE_FAILED | 세 칸은 보이고 "카드 없음"은 숨김. 보드 위에 실패 문구 (SCREEN-SPEC "대안과 결정") | 새로고침 |
+| 새 카드 만들기 (S-02에서 만들기) F-01, F-07 | `POST /api/tasks` | title을 검사한다. status를 TODO로, id와 ordered_at을 정해 저장한다. | 창이 닫히고, 카드가 "할 일" 칸 맨 위에 생긴다. | 빈 제목 (화면이 막음), TITLE_EMPTY (422, title 칸 오류), 서버에 닿지 못함, STORAGE_FAILED | 빈 제목: 창 안에 안내 문구, 적은 설명은 남음. 그 밖: 창이 열린 채 쓴 내용 유지 ([D-008](DECISIONS.md)), 창 안에 실패 문구 | 만들기 다시 누르기, 취소 |
+| 내용 수정 (수정 → 저장) F-02, F-07 | `PATCH /api/tasks/{id}` | title을 검사한다. title과 description만 바꾼다. status와 ordered_at은 그대로 둔다. | 내용이 바뀐다. 칸 안 자리는 그대로다. | 빈 제목 (화면이 막음), TITLE_EMPTY (422, title 칸 오류), TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 빈 제목: 안내 문구. 그 밖: 카드는 원래 내용이고, 수정 중인 채로 고치던 글이 남고, 카드 안에 실패 문구 (SCREEN-SPEC "대안과 결정") | 저장 다시 누르기, 취소 |
+| 상태 바꾸기 (상태 버튼, 다른 칸에 끌어다 놓기) F-04 | `PATCH /api/tasks/{id}/status` | status를 검사한다. 바꾼 뒤 ordered_at을 지금으로 정한다. | 카드가 새 칸 맨 위에 놓인다. | INVALID_STATUS, TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 카드는 원래 칸, 원래 자리. 카드 안에 실패 문구 | 다시 누르거나 끌기, 새로고침 |
+| 삭제 ("정말 지울까요?"에서 "예") F-03 | `DELETE /api/tasks/{id}` | 카드를 저장소에서 지운다. | 카드가 사라진다. | TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 카드가 남는다. 카드 안에 실패 문구 | 삭제 다시 누르기, 새로고침 |
 
 - TASK_NOT_FOUND는 주로 다른 기기에서 이미 지운 카드를 건드릴 때 생긴다 ([D-009](DECISIONS.md)). 이때 화면이 할 일은 미정이다 ("미정" 절).
 - 서버에 보내지 않는 행동: 새 카드 버튼 누르기, 만들기 취소, 수정 취소, 삭제 "아니오". 원래 칸에 끌어다 놓기를 보낼지는 미정이다 ("API 계약 결정 기록").

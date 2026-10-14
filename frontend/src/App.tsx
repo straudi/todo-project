@@ -8,6 +8,7 @@ import {
   type TaskStatus,
 } from './api'
 import { COLUMNS } from './columns'
+import { LOAD_FAILED_MESSAGE } from './messages'
 import { CreateTaskDialog } from './CreateTaskDialog'
 import { TaskCard } from './TaskCard'
 
@@ -16,14 +17,20 @@ function App() {
   const [creating, setCreating] = useState(false)
   // 상태를 바꾸는 중인 카드. 응답이 올 때까지 그 카드의 상태 버튼과 끌기를 막는다.
   const [movingIds, setMovingIds] = useState<ReadonlySet<number>>(new Set())
+  // 마지막 상태 바꾸기가 실패한 카드. 그 카드 안에 실패 문구가 보인다.
+  const [moveFailedIds, setMoveFailedIds] = useState<ReadonlySet<number>>(new Set())
+  // 처음 열 때 목록을 받지 못했다 (SCREEN-SPEC.md "대안과 결정").
+  const [loadFailed, setLoadFailed] = useState(false)
   // 휴대폰은 상태 버튼만 쓴다 (SCREEN-SPEC.md "대안과 결정").
   const [canDrag] = useState(() => window.matchMedia('(pointer: fine)').matches)
 
   useEffect(() => {
-    // 목록을 받지 못했을 때 보여 줄 것은 SCREEN-SPEC.md "미정"이라, 빈 칸 그대로 둔다.
     fetchTasks()
-      .then(setTasks)
-      .catch(() => {})
+      .then((loaded) => {
+        setTasks(loaded)
+        setLoadFailed(false)
+      })
+      .catch(() => setLoadFailed(true))
   }, [])
 
   function handleCreated(task: Task) {
@@ -38,18 +45,16 @@ function App() {
       return
     }
     setMovingIds((previous) => new Set(previous).add(task.id))
+    setMoveFailedIds((previous) => withoutId(previous, task.id))
     try {
       const moved = await changeTaskStatus(task.id, status)
       // 서버가 성공을 알린 뒤에 카드를 새 칸 맨 위에 놓는다.
       setTasks((previous) => [moved, ...previous.filter((t) => t.id !== moved.id)])
     } catch {
-      // 실패하면 카드는 원래 칸, 원래 자리에 있다. 실패 알림은 SCREEN-SPEC.md "미정".
+      // 실패하면 카드는 원래 칸, 원래 자리에 있고, 카드 안에 실패 문구가 보인다.
+      setMoveFailedIds((previous) => new Set(previous).add(task.id))
     } finally {
-      setMovingIds((previous) => {
-        const next = new Set(previous)
-        next.delete(task.id)
-        return next
-      })
+      setMovingIds((previous) => withoutId(previous, task.id))
     }
   }
 
@@ -79,6 +84,11 @@ function App() {
       <button type="button" className="new-card-button" onClick={() => setCreating(true)}>
         새 카드
       </button>
+      {loadFailed && (
+        <p role="alert" className="action-error">
+          {LOAD_FAILED_MESSAGE}
+        </p>
+      )}
       <div className="columns">
         {COLUMNS.map((column) => {
           // 서버가 준 순서를 바꾸지 않고 칸별로 나눈다.
@@ -92,13 +102,14 @@ function App() {
               onDrop={canDrag ? (event) => handleDrop(event, column.status) : undefined}
             >
               <h2 className="column-title">{column.label}</h2>
-              {/* 카드가 없는 칸의 문구는 PRD.md F-05를 따른다. */}
-              {columnTasks.length === 0 && <p className="column-empty">카드 없음</p>}
+              {/* 카드가 없는 칸의 문구는 PRD.md F-05를 따른다. 목록을 받지 못했으면 보이지 않는다. */}
+              {columnTasks.length === 0 && !loadFailed && <p className="column-empty">카드 없음</p>}
               {columnTasks.map((task) => (
                 <TaskCard
                   key={task.id}
                   task={task}
                   moving={movingIds.has(task.id)}
+                  moveFailed={moveFailedIds.has(task.id)}
                   canDrag={canDrag}
                   onMove={(status) => void moveTask(task, status)}
                   onSave={(title, description) => saveTask(task, title, description)}
@@ -114,6 +125,12 @@ function App() {
       )}
     </main>
   )
+}
+
+function withoutId(ids: ReadonlySet<number>, id: number): ReadonlySet<number> {
+  const next = new Set(ids)
+  next.delete(id)
+  return next
 }
 
 export default App

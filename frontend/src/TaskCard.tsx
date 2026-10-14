@@ -2,12 +2,19 @@ import { useState } from 'react'
 import { ApiInputError, type Task, type TaskStatus } from './api'
 import { AutoGrowTextarea } from './AutoGrowTextarea'
 import { COLUMNS } from './columns'
-import { TITLE_EMPTY_MESSAGE } from './messages'
+import {
+  DELETE_FAILED_MESSAGE,
+  MOVE_FAILED_MESSAGE,
+  SAVE_FAILED_MESSAGE,
+  TITLE_EMPTY_MESSAGE,
+} from './messages'
 
 type Props = {
   task: Task
   /** 상태를 바꾸는 요청의 응답을 기다리는 중 */
   moving: boolean
+  /** 마지막 상태 바꾸기가 실패했다. 다시 시도하면 false가 된다. */
+  moveFailed: boolean
   /** 마우스처럼 정밀한 포인터가 있는 기기에서만 끌 수 있다 (휴대폰은 상태 버튼만). */
   canDrag: boolean
   onMove: (status: TaskStatus) => void
@@ -20,19 +27,23 @@ type Props = {
 // 수정과 삭제 확인은 카드 안에서 한다 (SCREEN-SPEC.md "대안과 결정").
 type Mode = 'view' | 'edit' | 'confirmDelete'
 
-export function TaskCard({ task, moving, canDrag, onMove, onSave, onDelete }: Props) {
+export function TaskCard({ task, moving, moveFailed, canDrag, onMove, onSave, onDelete }: Props) {
   const [mode, setMode] = useState<Mode>('view')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [showTitleError, setShowTitleError] = useState(false)
   // 저장이나 삭제의 응답을 기다리는 중. 그동안 저장, "예" 버튼을 누를 수 없다.
   const [busy, setBusy] = useState(false)
+  // 실패 문구는 실패한 카드 안에 보이고, 다시 시도하면 사라진다 (SCREEN-SPEC.md "대안과 결정").
+  const [saveFailed, setSaveFailed] = useState(false)
+  const [deleteFailed, setDeleteFailed] = useState(false)
 
   function startEdit() {
     setTitle(task.title)
     // 수정할 때는 설명 전체가 보인다 (SCREEN-SPEC.md "S-01 보이는 요소").
     setDescription(task.description ?? '')
     setShowTitleError(false)
+    setSaveFailed(false)
     setMode('edit')
   }
 
@@ -43,6 +54,7 @@ export function TaskCard({ task, moving, canDrag, onMove, onSave, onDelete }: Pr
       return
     }
     setShowTitleError(false)
+    setSaveFailed(false)
     setBusy(true)
     try {
       await onSave(title, description.trim() === '' ? null : description)
@@ -53,21 +65,30 @@ export function TaskCard({ task, moving, canDrag, onMove, onSave, onDelete }: Pr
         error.errors.some((e) => e.field === 'title' && e.reason === 'TITLE_EMPTY')
       ) {
         setShowTitleError(true)
+      } else {
+        // 그 밖의 실패: 수정 중인 채로 고치던 글을 유지하고, 카드 안에 실패 문구를 보여 준다.
+        setSaveFailed(true)
       }
-      // 그 밖의 실패: 수정 중인 채로 고치던 글을 유지한다. 실패 알림은 SCREEN-SPEC.md "미정".
     } finally {
       setBusy(false)
     }
   }
 
   async function handleConfirmDelete() {
+    setDeleteFailed(false)
     setBusy(true)
     try {
       await onDelete()
     } catch {
-      // 실패하면 카드가 그대로 남는다. 실패 알림은 SCREEN-SPEC.md "미정".
+      // 실패하면 카드가 그대로 남고, 카드 안에 실패 문구를 보여 준다.
+      setDeleteFailed(true)
       setBusy(false)
     }
+  }
+
+  function closeConfirmDelete() {
+    setDeleteFailed(false)
+    setMode('view')
   }
 
   if (mode === 'edit') {
@@ -87,6 +108,11 @@ export function TaskCard({ task, moving, canDrag, onMove, onSave, onDelete }: Pr
           설명
           <AutoGrowTextarea rows={5} value={description} onChange={(e) => setDescription(e.target.value)} />
         </label>
+        {saveFailed && (
+          <p role="alert" className="action-error">
+            {SAVE_FAILED_MESSAGE}
+          </p>
+        )}
         <div className="card-actions">
           <button type="button" onClick={handleSave} disabled={busy}>
             저장
@@ -114,18 +140,28 @@ export function TaskCard({ task, moving, canDrag, onMove, onSave, onDelete }: Pr
       {mode === 'confirmDelete' ? (
         <div className="card-confirm">
           <p>정말 지울까요?</p>
+          {deleteFailed && (
+            <p role="alert" className="action-error">
+              {DELETE_FAILED_MESSAGE}
+            </p>
+          )}
           <div className="card-actions">
             <button type="button" onClick={handleConfirmDelete} disabled={busy}>
               예
             </button>
             {/* "아니오"를 누르면 서버에 보내지 않고 카드가 그대로 남는다. */}
-            <button type="button" onClick={() => setMode('view')}>
+            <button type="button" onClick={closeConfirmDelete}>
               아니오
             </button>
           </div>
         </div>
       ) : (
         <>
+          {moveFailed && (
+            <p role="alert" className="action-error">
+              {MOVE_FAILED_MESSAGE}
+            </p>
+          )}
           <div className="card-status-buttons">
             {/* 상태 버튼은 세 개 모두 보이고, 지금 상태 버튼은 누를 수 없다 (SCREEN-SPEC.md "S-01 보이는 요소"). */}
             {COLUMNS.map((column) => (

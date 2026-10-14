@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ApiInputError, createTask, type Task } from './api'
 import { AutoGrowTextarea } from './AutoGrowTextarea'
-import { TITLE_EMPTY_MESSAGE } from './messages'
+import { SAVE_FAILED_MESSAGE, TITLE_EMPTY_MESSAGE } from './messages'
 
 type Props = {
   onCreated: (task: Task) => void
@@ -14,6 +14,7 @@ export function CreateTaskDialog({ onCreated, onCancel }: Props) {
   const [description, setDescription] = useState('')
   const [showTitleError, setShowTitleError] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [saveFailed, setSaveFailed] = useState(false)
 
   async function handleCreate() {
     // 공백(띄어쓰기, 탭, 줄바꿈)만 있는 제목도 비어 있는 것으로 보고, 서버에 보내지 않는다.
@@ -22,6 +23,7 @@ export function CreateTaskDialog({ onCreated, onCancel }: Props) {
       return
     }
     setShowTitleError(false)
+    setSaveFailed(false)
     // 응답이 올 때까지 만들기 버튼을 누를 수 없다 (같은 카드가 두 장 생기지 않게).
     setSubmitting(true)
     try {
@@ -33,8 +35,10 @@ export function CreateTaskDialog({ onCreated, onCancel }: Props) {
         error.errors.some((e) => e.field === 'title' && e.reason === 'TITLE_EMPTY')
       ) {
         setShowTitleError(true)
+      } else {
+        // 그 밖의 실패: 창을 열어 둔 채 입력한 내용을 유지하고 (D-008), 창 안에 실패 문구를 보여 준다.
+        setSaveFailed(true)
       }
-      // 그 밖의 실패: 창을 열어 둔 채 입력한 내용을 유지한다 (D-008). 실패 알림은 SCREEN-SPEC.md "미정".
       setSubmitting(false)
     }
   }
@@ -55,6 +59,11 @@ export function CreateTaskDialog({ onCreated, onCancel }: Props) {
           설명
           <AutoGrowTextarea rows={5} value={description} onChange={(e) => setDescription(e.target.value)} />
         </label>
+        {saveFailed && (
+          <p role="alert" className="action-error">
+            {SAVE_FAILED_MESSAGE}
+          </p>
+        )}
         <div className="dialog-actions">
           <button type="button" onClick={handleCreate} disabled={submitting}>
             만들기
