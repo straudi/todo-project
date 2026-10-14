@@ -4,7 +4,7 @@
 
 ## 현재 상태
 
-요구사항과 설계를 확정했고, 구현 중입니다. 화면(`frontend/`)과 서버(`backend/`)를 이어, 저장된 카드가 상태별 칸에 보이고, 카드를 만들 수 있습니다. 새로고침하거나 브라우저를 다시 열어도 카드가 남아 있고, 좁은 화면에서는 세 칸이 세로로 쌓입니다. 카드가 없는 칸에는 "카드 없음"이 보입니다. 칸 이름 옆에 그 칸의 카드 개수가 보입니다. 카드의 상태 표시를 눌러 메뉴에서 고르거나, 끌어다 놓기(컴퓨터만)로 상태를 바꿀 수 있습니다. 카드 안에서 내용을 고치거나, "정말 지울까요?"를 확인한 뒤 지울 수 있습니다. 만들기, 수정, 상태 바꾸기, 삭제가 실패하면 그 자리에 안내 문구가 보입니다. 화면에는 DESIGN.md의 색, 글자, 여백, 모양 규칙이 들어가 있습니다. 작업별 진행 상황은 [PLAN.md](PLAN.md) "작업 목록"에 있습니다.
+요구사항과 설계를 확정했고, 구현 중입니다. 화면(`frontend/`)과 서버(`backend/`)를 이어, 저장된 카드가 상태별 칸에 보이고, 카드를 만들 수 있습니다. 새로고침하거나 브라우저를 다시 열어도 카드가 남아 있고, 좁은 화면에서는 세 칸이 세로로 쌓입니다. 카드가 없는 칸에는 "카드 없음"이 보입니다. 칸 이름 옆에 그 칸의 카드 개수가 보입니다. 카드의 상태 표시를 눌러 메뉴에서 고르거나, 끌어다 놓기(컴퓨터만)로 상태를 바꿀 수 있습니다. 카드 안에서 내용을 고치거나, "정말 지울까요?"를 확인한 뒤 지울 수 있습니다. 만들기, 수정, 상태 바꾸기, 삭제가 실패하면 그 자리에 안내 문구가 보입니다. 화면에는 DESIGN.md의 색, 글자, 여백, 모양 규칙이 들어가 있습니다. "실행 방법"대로 켜면 서버 하나가 화면과 카드 저장을 함께 맡고, 같은 와이파이의 휴대폰에서도 열 수 있습니다. 작업별 진행 상황은 [PLAN.md](PLAN.md) "작업 목록"에 있습니다.
 
 - 앱 안에 AI 기능은 넣지 않습니다.
 
@@ -32,7 +32,82 @@
 
 ## 실행 방법
 
-아직 미정입니다. 앱을 만든 뒤 여기에 적습니다.
+Windows의 PowerShell 기준입니다. 명령은 이 폴더(`todo-project`)에서 시작합니다.
+
+### 필요한 것
+
+- Node.js와 npm, Python 3.12 (이 컴퓨터에 설치된 버전은 [AGENTS.md](AGENTS.md) "환경"에 있습니다)
+
+### 처음 한 번만: 준비
+
+서버가 쓸 Python 패키지와 화면이 쓸 패키지를 설치합니다.
+
+```powershell
+cd backend
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+cd ..\frontend
+npm install
+cd ..
+```
+
+### 켜기
+
+화면을 빌드한 뒤, 서버 하나가 화면과 카드 저장을 함께 맡습니다 ([D-013](DECISIONS.md)).
+
+```powershell
+cd frontend
+npm run build
+cd ..\backend
+.venv\Scripts\python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+- 브라우저에서 http://localhost:8000 을 엽니다.
+- 카드는 `backend/data/tasks.db`에 저장됩니다. 껐다 켜도 남아 있습니다.
+- 개발 서버(아래 "개발할 때")가 켜져 있으면 포트 8000이 겹쳐 켜지지 않습니다. 개발 서버를 먼저 끕니다.
+
+### 끄기
+
+서버를 켠 PowerShell 창에서 `Ctrl + C`를 누릅니다.
+
+### 휴대폰에서 열기
+
+내 컴퓨터와 같은 와이파이에 연결된 휴대폰에서 열 수 있습니다 ([D-009](DECISIONS.md)).
+
+1. 처음 켤 때 Windows 방화벽 창이 뜨면 **"개인 네트워크"만** 허용합니다. 로그인이 없어서 같은 네트워크의 누구나 카드를 볼 수 있으므로, 공용 와이파이에서는 허용하지 않습니다.
+2. PowerShell에서 `ipconfig`를 실행해, 연결된 와이파이의 "IPv4 주소"(예: `192.168.0.10`)를 확인합니다.
+3. 휴대폰 브라우저에서 `http://<IPv4 주소>:8000` 을 엽니다.
+
+### 개발할 때
+
+화면 개발 서버와 서버를 따로 켭니다. 화면 개발 서버가 `/api` 요청을 서버로 넘깁니다 ([D-013](DECISIONS.md)). 이때 서버는 내 컴퓨터에서만 열립니다.
+
+```powershell
+cd backend
+.venv\Scripts\python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+```powershell
+cd frontend
+npm run dev
+```
+
+- 화면: http://localhost:5173
+
+### 자동 테스트
+
+```powershell
+cd backend
+.venv\Scripts\python -m pytest -v
+```
+
+```powershell
+cd e2e
+npm install
+npx playwright test
+```
+
+- 브라우저 테스트는 이 컴퓨터에 설치된 Chrome을 쓰고, 실제 카드(`backend/data/tasks.db`)를 건드리지 않습니다 ([D-012](DECISIONS.md)).
 
 ## 확인과 기록
 

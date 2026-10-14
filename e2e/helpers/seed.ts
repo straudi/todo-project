@@ -11,8 +11,8 @@ export type SeedTask = {
 }
 
 /** 테스트용 저장소를 비우고 카드를 넣는다. 화면은 이 저장소에 직접 닿지 않는다. */
-export function seedTasks(tasks: SeedTask[]): void {
-  execFileSync(PYTHON, [path.join(ROOT, 'e2e', 'helpers', 'seed_db.py'), TEST_DB_PATH], {
+export function seedTasks(tasks: SeedTask[], dbPath: string = TEST_DB_PATH): void {
+  execFileSync(PYTHON, [path.join(ROOT, 'e2e', 'helpers', 'seed_db.py'), dbPath], {
     input: JSON.stringify(tasks),
   })
 }

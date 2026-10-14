@@ -6,6 +6,7 @@ from typing import Any, Literal
 from fastapi import FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from .storage import Storage
@@ -16,6 +17,15 @@ DEFAULT_DB_PATH = Path(
     os.environ.get(
         "TASKS_DB_PATH",
         Path(__file__).resolve().parent.parent / "data" / "tasks.db",
+    )
+)
+
+# 실제로 쓸 때는 빌드한 화면(frontend/dist)을 이 서버가 함께 보여 준다 (DECISIONS.md D-013).
+# 브라우저 테스트는 FRONTEND_DIST로 다른 폴더를 가리킬 수 있다.
+DEFAULT_FRONTEND_DIR = Path(
+    os.environ.get(
+        "FRONTEND_DIST",
+        Path(__file__).resolve().parent.parent.parent / "frontend" / "dist",
     )
 )
 
@@ -78,7 +88,9 @@ def clean_description(description: str | None) -> str | None:
     return description
 
 
-def create_app(db_path: Path = DEFAULT_DB_PATH) -> FastAPI:
+def create_app(
+    db_path: Path = DEFAULT_DB_PATH, frontend_dir: Path | None = DEFAULT_FRONTEND_DIR
+) -> FastAPI:
     storage = Storage(db_path)
 
     @asynccontextmanager
@@ -147,6 +159,11 @@ def create_app(db_path: Path = DEFAULT_DB_PATH) -> FastAPI:
         if task is None:
             raise TaskNotFound()
         return task
+
+    # 화면 파일은 /api 주소들 뒤에 붙여, /api 요청이 먼저 처리되게 한다.
+    # 빌드한 화면이 없으면(개발할 때) 서버는 /api만 맡는다.
+    if frontend_dir is not None and frontend_dir.is_dir():
+        app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
 
     return app
 
