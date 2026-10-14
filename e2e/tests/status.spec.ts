@@ -126,7 +126,7 @@ test('T-20 지금 상태 버튼은 눌리지 않고, 나머지 두 버튼은 보
   expect(statusRequests.count).toBe(0)
 })
 
-test('T-21 칸 하나가 비게 되면 칸 이름과 "카드 없음"만 보인다', async ({ page }) => {
+test('T-21 칸 하나가 비게 되면 칸 이름, 칸 설명, "카드 없음"만 보인다', async ({ page }) => {
   await openBoard(page, [
     { id: 1, title: '장보기', description: null, status: 'TODO', ordered_at: 100 },
     { id: 2, title: '보고서 쓰기', description: null, status: 'IN_PROGRESS', ordered_at: 200 },
@@ -137,7 +137,7 @@ test('T-21 칸 하나가 비게 되면 칸 이름과 "카드 없음"만 보인�
 
   await expect(column(page, '진행 중')).toBeVisible()
   await expect(column(page, '진행 중').locator('.card')).toHaveCount(0)
-  await expect(column(page, '진행 중')).toHaveText('진행 중카드 없음')
+  await expect(column(page, '진행 중')).toHaveText('진행 중지금 진행하고 있어요카드 없음')
   await expect(titles(page, '할 일')).toHaveText(['장보기'])
   await expect(titles(page, '완료')).toHaveText(['보고서 쓰기', '운동'])
 })

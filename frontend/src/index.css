@@ -1,13 +1,14 @@
-/* 색, 글자, 여백, 모양은 DESIGN.md를 따른다. 값은 아래 변수에 모아 둔다. */
+/* 색, 글자, 여백, 모양은 DESIGN.md(2차)를 따른다. 값은 아래 변수에 모아 둔다. */
 
 :root {
-  --color-page: #f5f6f8;
+  --color-page: #f6f8fb;
   --color-surface: #ffffff;
   --color-text: #1f2328;
   --color-text-secondary: #57606a;
   --color-border: #d0d7de;
-  --color-primary: #1a55c0;
+  --color-primary: #1660d6;
   --color-danger: #b42318;
+  --color-danger-bg: #fef3f2;
   --color-message-bg: #fdecea;
   --color-disabled-text: #8c959f;
   --color-disabled-bg: #f1f3f5;
@@ -26,20 +27,23 @@ body {
   margin: 0;
 }
 
-/* 칸별 색: 할 일 회색, 진행 중 파랑, 완료 초록 (DESIGN.md "색"). */
+/* 칸별 색: 칸 바탕, 칸 색(위 띠, 아이콘, 이름), 표시 바탕 (DESIGN.md "색"). */
 [data-status='TODO'] {
-  --column-bg: #eef0f3;
+  --column-bg: #f0f2f5;
   --column-accent: #4d5866;
+  --column-tint: #e6e9ee;
 }
 
 [data-status='IN_PROGRESS'] {
-  --column-bg: #e8f0fe;
-  --column-accent: #1a55c0;
+  --column-bg: #eaf2ff;
+  --column-accent: #1660d6;
+  --column-tint: #dde9fd;
 }
 
 [data-status='DONE'] {
-  --column-bg: #e7f5ec;
-  --column-accent: #1a6b3c;
+  --column-bg: #eaf7ef;
+  --column-accent: #167a3f;
+  --column-tint: #dcf2e3;
 }
 
 /* 보드 */
@@ -51,7 +55,7 @@ body {
 
 .columns {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   margin-top: 16px;
 }
 
@@ -60,8 +64,8 @@ body {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
+  gap: 12px;
+  padding: 16px;
   border-top: 4px solid var(--column-accent);
   border-radius: 12px;
   background: var(--column-bg);
@@ -73,13 +77,28 @@ body {
   outline-offset: -2px;
 }
 
-.column-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
+/* 칸 머리: 아이콘, 칸 이름, 칸 설명 */
+.column-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.column-icon {
+  flex: none;
   color: var(--column-accent);
 }
 
+.column-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--column-accent);
+}
+
+.column-description,
 .column-empty {
   margin: 0;
   font-size: 14px;
@@ -91,11 +110,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+  padding: 16px;
+  border-radius: 12px;
   background: var(--color-surface);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
 }
 
 .card[draggable='true'] {
@@ -109,8 +127,8 @@ body {
 
 .card-title {
   margin: 0;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
@@ -128,6 +146,16 @@ body {
   white-space: pre-wrap;
 }
 
+/* 카드 아래 줄: 오른쪽 끝에 상태 버튼, 수정, 삭제 */
+.card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 .card-confirm {
   display: flex;
   flex-direction: column;
@@ -143,15 +171,23 @@ body {
 .dialog-actions {
   display: flex;
   flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-status-buttons {
   gap: 4px;
 }
 
 /* 버튼: 기본은 보조 버튼 (DESIGN.md "부품별 규칙"). */
 button {
-  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 36px;
   padding: 4px 12px;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
@@ -179,6 +215,26 @@ button:disabled {
   cursor: default;
 }
 
+/* 지금 상태 버튼: 누를 수 없지만, 그 칸의 표시 바탕과 칸 색 글자로 보인다. */
+button[data-current]:disabled {
+  border-color: var(--column-tint);
+  background: var(--column-tint);
+  color: var(--column-accent);
+}
+
+/* 아이콘 버튼 (수정, 삭제) */
+.icon-button {
+  width: 36px;
+  padding: 0;
+  color: var(--color-text-secondary);
+}
+
+.icon-button-danger {
+  border-color: var(--color-danger-bg);
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
@@ -199,7 +255,7 @@ textarea:focus-visible {
 .field textarea {
   padding: 8px;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
@@ -215,7 +271,7 @@ textarea:focus-visible {
 .action-error {
   margin: 0;
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--color-message-bg);
   color: var(--color-danger);
   font-size: 14px;
@@ -258,9 +314,14 @@ textarea:focus-visible {
 
   .columns {
     flex-direction: column;
+    gap: 16px;
   }
 
   button {
     min-height: 44px;
+  }
+
+  .icon-button {
+    width: 44px;
   }
 }

@@ -1,3 +1,4 @@
+import { Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { ApiInputError, type Task, type TaskStatus } from './api'
 import { AutoGrowTextarea } from './AutoGrowTextarea'
@@ -181,25 +182,40 @@ export function TaskCard({
               {MOVE_FAILED_MESSAGE}
             </p>
           )}
-          <div className="card-status-buttons">
-            {/* 상태 버튼은 세 개 모두 보이고, 지금 상태 버튼은 누를 수 없다 (SCREEN-SPEC.md "S-01 보이는 요소"). */}
-            {COLUMNS.map((column) => (
-              <button
-                key={column.status}
-                type="button"
-                disabled={moving || column.status === task.status}
-                onClick={() => onMove(column.status)}
-              >
-                {column.label}
-              </button>
-            ))}
-          </div>
-          <div className="card-actions">
-            <button type="button" onClick={startEdit} disabled={moving}>
-              수정
+          {/* 카드 아래 줄: 상태 버튼, 수정, 삭제 (DESIGN.md "부품별 규칙"). */}
+          <div className="card-footer">
+            <div className="card-status-buttons">
+              {/* 상태 버튼은 세 개 모두 보이고, 지금 상태 버튼은 누를 수 없다 (SCREEN-SPEC.md "S-01 보이는 요소"). */}
+              {COLUMNS.map((column) => (
+                <button
+                  key={column.status}
+                  type="button"
+                  data-current={column.status === task.status || undefined}
+                  disabled={moving || column.status === task.status}
+                  onClick={() => onMove(column.status)}
+                >
+                  {column.label}
+                </button>
+              ))}
+            </div>
+            {/* 아이콘만 보이는 버튼에도 "수정", "삭제"라는 이름을 붙인다 (DESIGN.md "아이콘"). */}
+            <button
+              type="button"
+              className="icon-button"
+              aria-label="수정"
+              onClick={startEdit}
+              disabled={moving}
+            >
+              <Pencil size={20} aria-hidden="true" />
             </button>
-            <button type="button" onClick={() => setMode('confirmDelete')} disabled={moving}>
-              삭제
+            <button
+              type="button"
+              className="icon-button icon-button-danger"
+              aria-label="삭제"
+              onClick={() => setMode('confirmDelete')}
+              disabled={moving}
+            >
+              <Trash2 size={20} aria-hidden="true" />
             </button>
           </div>
         </>

@@ -4,6 +4,13 @@ import { seedTasks, type SeedTask } from '../helpers/seed'
 
 const COLUMN_NAMES = ['할 일', '진행 중', '완료'] as const
 
+// SCREEN-SPEC.md "S-01 보이는 요소"의 칸 설명.
+const COLUMN_DESCRIPTIONS: Record<string, string> = {
+  '할 일': '해야 할 일을 정리해요',
+  '진행 중': '지금 진행하고 있어요',
+  완료: '완료된 작업들이에요',
+}
+
 const column = (page: Page, name: string) => page.getByRole('region', { name })
 
 /** 칸마다 카드의 제목과 설명을 위에서부터 읽는다. */
@@ -76,8 +83,8 @@ test('T-01 빈 보드에서는 세 칸이 가로로 나란히 보이고, 칸마�
     const section = column(page, name)
     await expect(section.getByRole('heading', { name })).toBeVisible()
     await expect(section.locator('.card')).toHaveCount(0)
-    // 칸 안에는 칸 이름과 "카드 없음"만 있다 (카드 개수 없음).
-    await expect(section).toHaveText(`${name}카드 없음`)
+    // 칸 안에는 칸 이름, 칸 설명, "카드 없음"만 있다 (카드 개수 없음).
+    await expect(section).toHaveText(`${name}${COLUMN_DESCRIPTIONS[name]}카드 없음`)
     boxes.push(await section.boundingBox())
   }
   // 왼쪽부터 할 일 → 진행 중 → 완료, 같은 높이에 나란히.
