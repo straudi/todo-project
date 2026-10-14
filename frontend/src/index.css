@@ -1,0 +1,17 @@
+/* 배치만 정한다. 색, 글자, 여백 같은 디자인은 DESIGN.md가 미정이라 넣지 않는다. */
+/* 좁은 화면에서 세로로 쌓기는 기준 너비가 SCREEN-SPEC.md "미정"이라 아직 넣지 않는다. */
+
+.board {
+  padding: 16px;
+}
+
+.columns {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.column {
+  flex: 1;
+  min-width: 0;
+}

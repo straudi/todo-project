@@ -4,7 +4,7 @@
 
 ## 현재 상태
 
-요구사항과 설계를 확정했고, 구현 전입니다. 지금은 문서(README.md, AGENTS.md, DECISIONS.md, PLAN.md, PRD.md, ARCHITECTURE.md, SCREEN-SPEC.md, DATA-MODEL.md, API-SPEC.md, TEST-PLAN.md)만 있습니다.
+요구사항과 설계를 확정했고, 구현 중입니다. 화면 틀(`frontend/`)을 만들었고, 서버는 아직 없습니다. 작업별 진행 상황은 [PLAN.md](PLAN.md) "작업 목록"에 있습니다.
 
 - 앱 안에 AI 기능은 넣지 않습니다.
 
