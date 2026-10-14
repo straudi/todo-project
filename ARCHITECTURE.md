@@ -50,6 +50,8 @@
 | 화면과 서버 함께 열기 | 개발할 때는 Vite 개발 서버가 `/api` 요청을 FastAPI로 넘긴다. 휴대폰 확인과 P-19 실행 때는 FastAPI가 만들어 둔 화면 파일까지 보여 준다. | [D-013](DECISIONS.md) |
 | 그 밖의 라이브러리·도구 | 미정 | |
 | 서버 실행 위치 | 내 컴퓨터 | [D-009](DECISIONS.md) |
+| 서버 주소와 포트 | 지금은 `127.0.0.1:8000`. 같은 네트워크의 다른 기기에서 열리게 하는 설정은 P-19에서 한다 | [API-SPEC.md](API-SPEC.md) "공통 규칙" |
+| 저장소 파일 위치 | `backend/data/tasks.db` (Git에 올리지 않음). 테스트는 임시 파일을 쓴다 | 사람 결정 (2026-10-14, PLAN.md P-12) |
 | 인터넷에 올리는 방법 (호스팅) | 해당 없음 | [D-009](DECISIONS.md) |
 | 지원할 브라우저 종류 | 컴퓨터 Chrome, 휴대폰 Safari | [TEST-PLAN.md](TEST-PLAN.md) |
 
