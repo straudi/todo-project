@@ -140,7 +140,8 @@ export function TaskCard({
             저장
           </button>
           {/* 취소하면 서버에 보내지 않고 원래 내용을 보여 준다. */}
-          <button type="button" onClick={() => setMode('view')}>
+          {/* 처리 중에는 취소도 누를 수 없다 (SCREEN-SPEC.md "대안과 결정"). */}
+          <button type="button" onClick={() => setMode('view')} disabled={busy}>
             취소
           </button>
         </div>
@@ -178,7 +179,7 @@ export function TaskCard({
               예
             </button>
             {/* "아니오"를 누르면 서버에 보내지 않고 카드가 그대로 남는다. */}
-            <button type="button" onClick={closeConfirmDelete}>
+            <button type="button" onClick={closeConfirmDelete} disabled={busy}>
               아니오
             </button>
           </div>

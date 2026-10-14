@@ -68,7 +68,8 @@ export function CreateTaskDialog({ onCreated, onCancel }: Props) {
           <button type="button" className="button-primary" onClick={handleCreate} disabled={submitting}>
             만들기
           </button>
-          <button type="button" onClick={onCancel}>
+          {/* 처리 중에는 취소도 누를 수 없다. 이미 보낸 요청을 되돌릴 수 없기 때문이다 (SCREEN-SPEC.md "대안과 결정"). */}
+          <button type="button" onClick={onCancel} disabled={submitting}>
             취소
           </button>
         </div>
