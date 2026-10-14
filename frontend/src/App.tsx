@@ -33,13 +33,15 @@ function App() {
         새 카드
       </button>
       <div className="columns">
-        {COLUMNS.map((column) => (
-          <section key={column.status} className="column" aria-label={column.label}>
-            <h2 className="column-title">{column.label}</h2>
-            {/* 서버가 준 순서를 바꾸지 않고 칸별로 나눈다. */}
-            {tasks
-              .filter((task) => task.status === column.status)
-              .map((task) => (
+        {COLUMNS.map((column) => {
+          // 서버가 준 순서를 바꾸지 않고 칸별로 나눈다.
+          const columnTasks = tasks.filter((task) => task.status === column.status)
+          return (
+            <section key={column.status} className="column" aria-label={column.label}>
+              <h2 className="column-title">{column.label}</h2>
+              {/* 카드가 없는 칸의 문구는 PRD.md F-05를 따른다. */}
+              {columnTasks.length === 0 && <p className="column-empty">카드 없음</p>}
+              {columnTasks.map((task) => (
                 <article key={task.id} className="card">
                   <h3 className="card-title">{task.title}</h3>
                   {task.description !== null && (
@@ -47,8 +49,9 @@ function App() {
                   )}
                 </article>
               ))}
-          </section>
-        ))}
+            </section>
+          )
+        })}
       </div>
       {creating && (
         <CreateTaskDialog onCreated={handleCreated} onCancel={() => setCreating(false)} />

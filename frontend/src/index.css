@@ -1,5 +1,4 @@
-/* 배치만 정한다. 색, 글자, 여백 같은 디자인은 DESIGN.md가 미정이라 넣지 않는다. */
-/* 좁은 화면에서 세로로 쌓기는 기준 너비가 SCREEN-SPEC.md "미정"이라 아직 넣지 않는다. */
+/* 배치만 정한다. 색, 글자, 여백 같은 디자인은 P-21에서 DESIGN.md를 만든 뒤 넣는다. */
 
 .board {
   padding: 16px;
@@ -14,6 +13,13 @@
 .column {
   flex: 1;
   min-width: 0;
+}
+
+/* 화면 너비 768px 미만에서는 세 칸을 세로로 쌓는다 (D-007, SCREEN-SPEC.md "대안과 결정"). */
+@media (max-width: 767.98px) {
+  .columns {
+    flex-direction: column;
+  }
 }
 
 /* 카드: 제목은 전부 줄바꿈, 설명은 두 줄까지 보이고 넘는 부분은 잘린다 (SCREEN-SPEC.md "S-01 보이는 요소"). */
