@@ -4,7 +4,7 @@
 
 - **상태:** 확정
 - **관련 작업:** P-05
-- **근거 문서:** [PRD.md](PRD.md), [DECISIONS.md](DECISIONS.md) (D-001, D-002 (D-009로 대체됨), D-003 (D-007로 대체됨), D-004, D-005, D-006, D-007, D-009, D-011)
+- **근거 문서:** [PRD.md](PRD.md), [DECISIONS.md](DECISIONS.md) (D-001, D-002 (D-009로 대체됨), D-003 (D-007로 대체됨), D-004, D-005, D-006, D-007, D-009, D-011, D-012, D-013)
 
 ## 적용 범위와 전체 구조
 
@@ -36,10 +36,18 @@
 | 화면 쪽 언어 | TypeScript | [D-006](DECISIONS.md) |
 | 서버 | FastAPI (Python) | [D-005](DECISIONS.md) |
 | 저장소 | SQLite | [D-005](DECISIONS.md) |
-| 각 기술의 버전 | 미정 | |
+| 각 기술의 버전 | 설치된 도구는 지금 버전 그대로 (PLAN.md "구현 인계"). 라이브러리는 설치하는 날의 최신 안정판, 설치한 뒤 AGENTS.md "환경"에 번호를 적음 | [D-012](DECISIONS.md) |
 | 서버 테스트 | pytest + FastAPI TestClient | [D-011](DECISIONS.md) |
 | 브라우저 테스트 | Playwright (Node.js, TypeScript) | [D-011](DECISIONS.md) |
-| 화면 부품 테스트 | 미정 | [D-011](DECISIONS.md) |
+| 화면 부품 테스트 | 첫 버전에서 쓰지 않음 | [D-012](DECISIONS.md) |
+| 브라우저 테스트가 쓸 브라우저 | 이 컴퓨터에 설치된 Chrome | [D-012](DECISIONS.md) |
+| 화면 만들기·실행 | Vite | [D-012](DECISIONS.md) |
+| Python 패키지 설치 | venv + pip | [D-012](DECISIONS.md) |
+| 서버 실행 | Uvicorn | [D-012](DECISIONS.md) |
+| SQLite 읽고 쓰기 | Python 기본 기능 `sqlite3` | [D-012](DECISIONS.md) |
+| 끌어다 놓기 | 브라우저 기본 기능 | [D-012](DECISIONS.md) |
+| 코드 폴더 | `frontend/` (화면), `backend/` (서버와 pytest), `e2e/` (Playwright) | [D-013](DECISIONS.md) |
+| 화면과 서버 함께 열기 | 개발할 때는 Vite 개발 서버가 `/api` 요청을 FastAPI로 넘긴다. 휴대폰 확인과 P-19 실행 때는 FastAPI가 만들어 둔 화면 파일까지 보여 준다. | [D-013](DECISIONS.md) |
 | 그 밖의 라이브러리·도구 | 미정 | |
 | 서버 실행 위치 | 내 컴퓨터 | [D-009](DECISIONS.md) |
 | 인터넷에 올리는 방법 (호스팅) | 해당 없음 | [D-009](DECISIONS.md) |

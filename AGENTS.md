@@ -31,8 +31,11 @@
 ## 환경
 
 - 화면: React (TypeScript), 서버: FastAPI (Python), 저장소: SQLite ([D-005](DECISIONS.md), [D-006](DECISIONS.md))
-- 자동 테스트: 서버는 pytest + FastAPI TestClient, 브라우저는 Playwright (Node.js, TypeScript) ([D-011](DECISIONS.md)). 화면 부품 테스트 도구는 미정입니다.
-- 각 도구의 버전, 그 밖의 라이브러리와 도구는 미정입니다.
+- 자동 테스트: 서버는 pytest + FastAPI TestClient, 브라우저는 Playwright (Node.js, TypeScript) ([D-011](DECISIONS.md)). 화면 부품 테스트 도구는 첫 버전에서 쓰지 않습니다 ([D-012](DECISIONS.md)). Playwright는 이 컴퓨터에 설치된 Chrome을 씁니다 ([D-012](DECISIONS.md)).
+- 도구: 화면은 Vite, Python 패키지는 venv + pip, 서버 실행은 Uvicorn, SQLite 읽고 쓰기는 Python `sqlite3`, 끌어다 놓기는 브라우저 기본 기능 ([D-012](DECISIONS.md))
+- 버전: 라이브러리는 설치하는 날의 최신 안정판을 쓰고, 설치한 뒤 이 줄에 번호를 적습니다 ([D-012](DECISIONS.md)). 아직 설치하지 않았습니다.
+- 코드 폴더와 실행 구성: `frontend/`, `backend/`, `e2e/`. 개발할 때는 Vite가 `/api`를 FastAPI로 넘기고, 휴대폰 확인과 P-19 때는 FastAPI가 화면 파일도 보여 줍니다 ([D-013](DECISIONS.md)).
+- 그 밖의 라이브러리와 도구는 미정입니다.
 - 정해지지 않은 언어, 라이브러리, 도구가 필요한 작업이면 직접 고르지 말고 사람에게 물어보세요.
 
 ## 작업 전

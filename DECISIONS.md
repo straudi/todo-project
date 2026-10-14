@@ -91,8 +91,35 @@
 
 ## D-011. 자동 테스트 도구는 서버 pytest, 브라우저 Playwright(TypeScript)로 한다
 
-- **결정 내용:** 서버(FastAPI) 테스트는 pytest와 FastAPI TestClient로 한다. 화면·서버·저장소를 함께 돌리는 브라우저 테스트는 Playwright의 Node.js(TypeScript)용으로 한다. 화면 부품 테스트 도구와 각 도구의 버전은 미정이다. 설치는 앱을 만들 때 따로 승인을 받고 한다.
+- **결정 내용:** 서버(FastAPI) 테스트는 pytest와 FastAPI TestClient로 한다. 화면·서버·저장소를 함께 돌리는 브라우저 테스트는 Playwright의 Node.js(TypeScript)용으로 한다. 화면 부품 테스트 도구와 각 도구의 버전은 미정이다. 설치는 앱을 만들 때 따로 승인을 받고 한다. 화면 부품 테스트 도구와 버전은 D-012를 따른다.
 - **결정 이유:** 미정
 - **적용 범위:** 첫 버전
 - **관련 기준 문서:** [TEST-PLAN.md](TEST-PLAN.md), [ARCHITECTURE.md](ARCHITECTURE.md)
+- **유효 상태:** 유효
+
+## D-012. 구현 도구와 라이브러리
+
+- **결정 내용:**
+  - 설치할 라이브러리(React, TypeScript, FastAPI, pytest, Playwright 등)는 설치하는 날의 최신 안정판을 쓰고, 설치한 뒤 실제 버전 번호를 AGENTS.md "환경"에 적는다.
+  - 화면은 Vite(React + TypeScript 틀)로 만들고 실행한다.
+  - Python 패키지는 venv + pip로 이 프로젝트에만 설치한다.
+  - 서버는 Uvicorn으로 실행한다.
+  - 서버는 Python 기본 기능 `sqlite3`로 SQLite에 읽고 쓴다.
+  - 끌어다 놓기는 브라우저 기본 기능으로 만든다.
+  - 첫 버전에서는 화면 부품 테스트 도구를 쓰지 않는다.
+  - Playwright는 이 컴퓨터에 설치된 Chrome을 쓴다.
+- **결정 이유:** AI 제안의 이유를 사람이 받아들임 (2026-10-14). 새로 설치할 도구를 줄이고, 화면과 서버 역할이 겹치지 않게 한다 (D-005). TEST-PLAN.md에는 부품 테스트에 맡긴 시나리오가 없다. 휴대폰에서는 끌어다 놓기를 쓰지 않는다.
+- **적용 범위:** 첫 버전
+- **관련 기준 문서:** [ARCHITECTURE.md](ARCHITECTURE.md), [TEST-PLAN.md](TEST-PLAN.md)
+- **유효 상태:** 유효
+
+## D-013. 코드 폴더와 실행 구성
+
+- **결정 내용:**
+  - 코드는 `frontend/`(화면), `backend/`(서버와 pytest), `e2e/`(Playwright)에 나눠 둔다.
+  - 개발할 때는 Vite 개발 서버가 `/api` 요청을 FastAPI로 넘긴다.
+  - 휴대폰 확인과 P-19 실행 때는 FastAPI가 만들어 둔 화면 파일까지 함께 보여 준다.
+- **결정 이유:** AI 제안의 이유를 사람이 받아들임 (2026-10-14). 화면·서버 구분(ARCHITECTURE)과 테스트 도구의 언어(D-011)에 맞추고, 실행할 때 켜는 것을 서버 하나로 줄인다.
+- **적용 범위:** 첫 버전
+- **관련 기준 문서:** [ARCHITECTURE.md](ARCHITECTURE.md)
 - **유효 상태:** 유효
