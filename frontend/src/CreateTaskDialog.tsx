@@ -65,7 +65,7 @@ export function CreateTaskDialog({ onCreated, onCancel }: Props) {
           </p>
         )}
         <div className="dialog-actions">
-          <button type="button" onClick={handleCreate} disabled={submitting}>
+          <button type="button" className="button-primary" onClick={handleCreate} disabled={submitting}>
             만들기
           </button>
           <button type="button" onClick={onCancel}>

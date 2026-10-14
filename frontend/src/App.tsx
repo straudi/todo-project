@@ -21,6 +21,8 @@ function App() {
   const [moveFailedIds, setMoveFailedIds] = useState<ReadonlySet<number>>(new Set())
   // 처음 열 때 목록을 받지 못했다 (SCREEN-SPEC.md "대안과 결정").
   const [loadFailed, setLoadFailed] = useState(false)
+  // 카드를 끄는 동안 마우스가 올라간 칸. 그 칸에 테두리를 두른다 (DESIGN.md "부품별 규칙").
+  const [dropTarget, setDropTarget] = useState<TaskStatus | null>(null)
   // 휴대폰은 상태 버튼만 쓴다 (SCREEN-SPEC.md "대안과 결정").
   const [canDrag] = useState(() => window.matchMedia('(pointer: fine)').matches)
 
@@ -69,8 +71,30 @@ function App() {
     setTasks((previous) => previous.filter((t) => t.id !== task.id))
   }
 
+  // 칸에 들어오거나 칸 위에 있으면 그 칸에 테두리를 두른다.
+  function handleDragOver(event: React.DragEvent, status: TaskStatus) {
+    event.preventDefault()
+    setDropTarget(status)
+  }
+
+  function handleDragLeave(event: React.DragEvent, status: TaskStatus) {
+    // 칸 안의 카드로 옮겨 갈 때도 dragleave가 온다. 끌기 중에는 relatedTarget이 비어 있을 수 있어서,
+    // 마우스가 아직 칸 영역 안에 있으면 칸을 떠난 것으로 보지 않는다.
+    const box = event.currentTarget.getBoundingClientRect()
+    const inside =
+      event.clientX > box.left &&
+      event.clientX < box.right &&
+      event.clientY > box.top &&
+      event.clientY < box.bottom
+    if (!inside) {
+      // 다른 칸에 먼저 들어온 뒤에 이 칸의 dragleave가 올 수 있으니, 이 칸의 테두리만 지운다.
+      setDropTarget((current) => (current === status ? null : current))
+    }
+  }
+
   function handleDrop(event: React.DragEvent, status: TaskStatus) {
     event.preventDefault()
+    setDropTarget(null)
     const id = Number(event.dataTransfer.getData('text/plain'))
     const task = tasks.find((t) => t.id === id)
     if (task) {
@@ -81,7 +105,11 @@ function App() {
 
   return (
     <main className="board">
-      <button type="button" className="new-card-button" onClick={() => setCreating(true)}>
+      <button
+        type="button"
+        className="new-card-button button-primary"
+        onClick={() => setCreating(true)}
+      >
         새 카드
       </button>
       {loadFailed && (
@@ -98,7 +126,11 @@ function App() {
               key={column.status}
               className="column"
               aria-label={column.label}
-              onDragOver={canDrag ? (event) => event.preventDefault() : undefined}
+              data-status={column.status}
+              data-drop-target={dropTarget === column.status || undefined}
+              onDragEnter={canDrag ? (event) => handleDragOver(event, column.status) : undefined}
+              onDragOver={canDrag ? (event) => handleDragOver(event, column.status) : undefined}
+              onDragLeave={canDrag ? (event) => handleDragLeave(event, column.status) : undefined}
               onDrop={canDrag ? (event) => handleDrop(event, column.status) : undefined}
             >
               <h2 className="column-title">{column.label}</h2>
@@ -114,6 +146,7 @@ function App() {
                   onMove={(status) => void moveTask(task, status)}
                   onSave={(title, description) => saveTask(task, title, description)}
                   onDelete={() => removeTask(task)}
+                  onDragEnd={() => setDropTarget(null)}
                 />
               ))}
             </section>

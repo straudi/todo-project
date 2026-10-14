@@ -127,4 +127,5 @@
 | 카드가 가진 항목, 상태 값, 칸 안 순서 기준 | [DATA-MODEL.md](DATA-MODEL.md) | 작성됨 |
 | 화면과 서버가 주고받는 요청·응답, 거절과 실패의 모양 | [API-SPEC.md](API-SPEC.md) | 작성됨 |
 | 검사 기준 (기능마다 확인 방법과 기대 결과) | [TEST-PLAN.md](TEST-PLAN.md) | 작성됨 |
+| 화면의 색, 글자, 여백, 모양 | [DESIGN.md](DESIGN.md) | 작성됨 |
 | 새로 정하는 중요한 선택 | [DECISIONS.md](DECISIONS.md) | 있음 |

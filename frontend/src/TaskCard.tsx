@@ -22,12 +22,23 @@ type Props = {
   onSave: (title: string, description: string | null) => Promise<void>
   /** 성공하면 끝나고, 실패하면 오류를 던진다. */
   onDelete: () => Promise<void>
+  /** 끌기가 끝났다 (놓았거나 그만두었다). */
+  onDragEnd: () => void
 }
 
 // 수정과 삭제 확인은 카드 안에서 한다 (SCREEN-SPEC.md "대안과 결정").
 type Mode = 'view' | 'edit' | 'confirmDelete'
 
-export function TaskCard({ task, moving, moveFailed, canDrag, onMove, onSave, onDelete }: Props) {
+export function TaskCard({
+  task,
+  moving,
+  moveFailed,
+  canDrag,
+  onMove,
+  onSave,
+  onDelete,
+  onDragEnd,
+}: Props) {
   const [mode, setMode] = useState<Mode>('view')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -37,6 +48,8 @@ export function TaskCard({ task, moving, moveFailed, canDrag, onMove, onSave, on
   // 실패 문구는 실패한 카드 안에 보이고, 다시 시도하면 사라진다 (SCREEN-SPEC.md "대안과 결정").
   const [saveFailed, setSaveFailed] = useState(false)
   const [deleteFailed, setDeleteFailed] = useState(false)
+  // 끄는 동안 원래 자리의 카드를 흐리게 보여 준다 (DESIGN.md "부품별 규칙").
+  const [dragging, setDragging] = useState(false)
 
   function startEdit() {
     setTitle(task.title)
@@ -114,7 +127,7 @@ export function TaskCard({ task, moving, moveFailed, canDrag, onMove, onSave, on
           </p>
         )}
         <div className="card-actions">
-          <button type="button" onClick={handleSave} disabled={busy}>
+          <button type="button" className="button-primary" onClick={handleSave} disabled={busy}>
             저장
           </button>
           {/* 취소하면 서버에 보내지 않고 원래 내용을 보여 준다. */}
@@ -130,9 +143,15 @@ export function TaskCard({ task, moving, moveFailed, canDrag, onMove, onSave, on
     <article
       className="card"
       draggable={canDrag && !moving && mode === 'view'}
+      data-dragging={dragging || undefined}
       onDragStart={(event) => {
         event.dataTransfer.setData('text/plain', String(task.id))
         event.dataTransfer.effectAllowed = 'move'
+        setDragging(true)
+      }}
+      onDragEnd={() => {
+        setDragging(false)
+        onDragEnd()
       }}
     >
       <h3 className="card-title">{task.title}</h3>
@@ -146,7 +165,7 @@ export function TaskCard({ task, moving, moveFailed, canDrag, onMove, onSave, on
             </p>
           )}
           <div className="card-actions">
-            <button type="button" onClick={handleConfirmDelete} disabled={busy}>
+            <button type="button" className="button-danger" onClick={handleConfirmDelete} disabled={busy}>
               예
             </button>
             {/* "아니오"를 누르면 서버에 보내지 않고 카드가 그대로 남는다. */}

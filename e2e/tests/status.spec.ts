@@ -197,3 +197,24 @@ test('T-24 원래 칸에 끌어다 놓으면 자리가 바뀌지 않고, 새로�
   await page.reload()
   await expect(titles(page, '할 일')).toHaveText(['보고서 쓰기', '장보기'])
 })
+
+test('끄는 동안 원래 카드는 흐려지고, 마우스가 올라간 칸에 테두리가 생긴다 (DESIGN.md)', async ({ page }) => {
+  await openBoard(page, [
+    { id: 1, title: '장보기', description: null, status: 'TODO', ordered_at: 100 },
+    { id: 2, title: '운동', description: null, status: 'DONE', ordered_at: 200 },
+  ])
+
+  await card(page, '할 일', '장보기').hover()
+  await page.mouse.down()
+  const doneBox = (await column(page, '완료').boundingBox())!
+  await page.mouse.move(doneBox.x + doneBox.width / 2, doneBox.y + doneBox.height / 2, { steps: 5 })
+
+  await expect(card(page, '할 일', '장보기')).toHaveCSS('opacity', '0.5')
+  await expect(column(page, '완료')).toHaveAttribute('data-drop-target')
+  await expect(column(page, '할 일')).not.toHaveAttribute('data-drop-target')
+
+  await page.mouse.up()
+  await expect(titles(page, '완료')).toHaveText(['장보기', '운동'])
+  await expect(page.locator('[data-drop-target]')).toHaveCount(0)
+  await expect(card(page, '완료', '장보기')).toHaveCSS('opacity', '1')
+})

@@ -1,7 +1,52 @@
-/* 배치만 정한다. 색, 글자, 여백 같은 디자인은 P-21에서 DESIGN.md를 만든 뒤 넣는다. */
+/* 색, 글자, 여백, 모양은 DESIGN.md를 따른다. 값은 아래 변수에 모아 둔다. */
 
+:root {
+  --color-page: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-text: #1f2328;
+  --color-text-secondary: #57606a;
+  --color-border: #d0d7de;
+  --color-primary: #1a55c0;
+  --color-danger: #b42318;
+  --color-message-bg: #fdecea;
+  --color-disabled-text: #8c959f;
+  --color-disabled-bg: #f1f3f5;
+
+  --font-family: system-ui, -apple-system, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic',
+    'Noto Sans KR', sans-serif;
+
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-page);
+}
+
+body {
+  margin: 0;
+}
+
+/* 칸별 색: 할 일 회색, 진행 중 파랑, 완료 초록 (DESIGN.md "색"). */
+[data-status='TODO'] {
+  --column-bg: #eef0f3;
+  --column-accent: #4d5866;
+}
+
+[data-status='IN_PROGRESS'] {
+  --column-bg: #e8f0fe;
+  --column-accent: #1a55c0;
+}
+
+[data-status='DONE'] {
+  --column-bg: #e7f5ec;
+  --column-accent: #1a6b3c;
+}
+
+/* 보드 */
 .board {
-  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
 }
 
 .columns {
@@ -13,22 +58,67 @@
 .column {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-top: 4px solid var(--column-accent);
+  border-radius: 12px;
+  background: var(--column-bg);
 }
 
-/* 화면 너비 768px 미만에서는 세 칸을 세로로 쌓는다 (D-007, SCREEN-SPEC.md "대안과 결정"). */
-@media (max-width: 767.98px) {
-  .columns {
-    flex-direction: column;
-  }
+/* 카드를 끄는 동안 마우스가 올라간 칸 (DESIGN.md "부품별 규칙"). */
+.column[data-drop-target] {
+  outline: 2px solid var(--column-accent);
+  outline-offset: -2px;
+}
+
+.column-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--column-accent);
+}
+
+.column-empty {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-secondary);
 }
 
 /* 카드: 제목은 전부 줄바꿈, 설명은 두 줄까지 보이고 넘는 부분은 잘린다 (SCREEN-SPEC.md "S-01 보이는 요소"). */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+
+.card[draggable='true'] {
+  cursor: grab;
+}
+
+/* 끄는 동안 원래 자리의 카드는 흐리게 보인다. */
+.card[data-dragging] {
+  opacity: 0.5;
+}
+
 .card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
 
 .card-description {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-secondary);
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -38,7 +128,104 @@
   white-space: pre-wrap;
 }
 
-/* S-02 만들기 창: 보드 위에 띄운다. 창 뒤의 보드를 가리는 배경만 둔다. */
+.card-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-confirm p {
+  margin: 0;
+}
+
+.card-status-buttons,
+.card-actions,
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* 버튼: 기본은 보조 버튼 (DESIGN.md "부품별 규칙"). */
+button {
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button-primary {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.button-danger {
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+  color: #ffffff;
+}
+
+button:disabled {
+  border-color: var(--color-disabled-bg);
+  background: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: default;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* 입력칸 */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.field input,
+.field textarea {
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.field textarea {
+  resize: none;
+}
+
+/* 제목 없음 안내, 실패 문구 */
+.field-error,
+.action-error {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--color-message-bg);
+  color: var(--color-danger);
+  font-size: 14px;
+}
+
+.board > .action-error {
+  margin-top: 16px;
+}
+
+/* S-02 만들기 창: 보드 위에 띄운다. */
 .dialog-backdrop {
   position: fixed;
   inset: 0;
@@ -51,33 +238,29 @@
 .dialog {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   width: min(480px, calc(100% - 32px));
   /* 설명이 길어 창이 화면보다 커지면 창 안에서 내려 본다. */
   max-height: calc(100% - 32px);
   overflow-y: auto;
-  padding: 16px;
-  background: Canvas;
-  color: CanvasText;
+  box-sizing: border-box;
+  padding: 24px;
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.2);
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-}
+/* 화면 너비 768px 미만: 세 칸을 세로로 쌓고 (D-007), 버튼을 손가락으로 누르기 쉽게 키운다 (DESIGN.md "좁은 화면"). */
+@media (max-width: 767.98px) {
+  .board {
+    padding: 16px;
+  }
 
-.dialog-actions {
-  display: flex;
-  gap: 8px;
-}
+  .columns {
+    flex-direction: column;
+  }
 
-.card-status-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.card-actions {
-  display: flex;
-  gap: 4px;
+  button {
+    min-height: 44px;
+  }
 }
