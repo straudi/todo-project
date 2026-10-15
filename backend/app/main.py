@@ -1,4 +1,6 @@
+import logging
 import os
+import sqlite3
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any, Literal
@@ -10,6 +12,8 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from .storage import Storage
+
+logger = logging.getLogger("todo")
 
 # 저장소 파일 위치는 ARCHITECTURE.md "기술과 실행 환경"을 따른다.
 # 브라우저 테스트는 TASKS_DB_PATH로 테스트용 파일을 가리킨다.
@@ -103,6 +107,18 @@ def create_app(
     @app.exception_handler(InputError)
     async def handle_input_error(request: Request, error: InputError) -> JSONResponse:
         return input_errors_response([{"field": error.field, "reason": error.reason}])
+
+    @app.exception_handler(sqlite3.Error)
+    async def handle_storage_error(request: Request, error: sqlite3.Error) -> JSONResponse:
+        # 저장소에 읽거나 쓰지 못했다. 자세한 내용(파일 경로 등)은 서버 기록에만 남기고,
+        # 응답에는 거절 이유 이름만 보낸다 (API-SPEC.md "API 계약 결정 기록").
+        logger.error(
+            "storage failed: %s %s", request.method, request.url.path, exc_info=error
+        )
+        return JSONResponse(
+            status_code=500,
+            content={"errors": [{"field": None, "reason": "STORAGE_FAILED"}]},
+        )
 
     @app.exception_handler(TaskNotFound)
     async def handle_task_not_found(request: Request, error: TaskNotFound) -> JSONResponse:
