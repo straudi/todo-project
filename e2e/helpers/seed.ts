@@ -8,6 +8,8 @@ export type SeedTask = {
   description: string | null
   status: 'TODO' | 'IN_PROGRESS' | 'DONE'
   ordered_at: number
+  /** 만든 시각 (마이크로초). 없으면 ordered_at 값을 쓴다. */
+  created_at?: number
 }
 
 /** 테스트용 저장소를 비우고 카드를 넣는다. 화면은 이 저장소에 직접 닿지 않는다. */

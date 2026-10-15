@@ -16,7 +16,9 @@ def test_create_task_returns_201_and_starts_as_todo(client):
     response = client.post("/api/tasks", json={"title": "장보기", "description": "우유, 계란"})
 
     assert response.status_code == 201
-    assert response.json() == {"id": 1, "title": "장보기", "description": "우유, 계란", "status": "TODO"}
+    task = response.json()
+    assert task.pop("created_at")  # 값은 test_created_at.py에서 확인한다.
+    assert task == {"id": 1, "title": "장보기", "description": "우유, 계란", "status": "TODO"}
     assert client.get("/api/tasks").json() == [response.json()]
 
 
@@ -86,4 +88,6 @@ def test_status_id_and_ordered_at_in_request_are_ignored(client):
     )
 
     assert response.status_code == 201
-    assert response.json() == {"id": 1, "title": "장보기", "description": None, "status": "TODO"}
+    task = response.json()
+    assert task.pop("created_at")
+    assert task == {"id": 1, "title": "장보기", "description": None, "status": "TODO"}

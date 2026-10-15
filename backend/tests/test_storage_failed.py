@@ -22,8 +22,8 @@ def client(db_path):
     with TestClient(create_app(db_path)) as client:
         with closing(sqlite3.connect(db_path)) as conn, conn:
             conn.execute(
-                "INSERT INTO tasks (id, title, description, status, ordered_at)"
-                " VALUES (1, '장보기', NULL, 'TODO', 100)"
+                "INSERT INTO tasks (id, title, description, status, ordered_at, created_at)"
+                " VALUES (1, '장보기', NULL, 'TODO', 100, 100)"
             )
         yield client
 
@@ -36,7 +36,7 @@ def read_only(db_path, client):
     os.chmod(db_path, stat.S_IREAD | stat.S_IWRITE)
 
 
-ONE_CARD = [{"id": 1, "title": "장보기", "description": None, "status": "TODO"}]
+ONE_CARD = [{"id": 1, "title": "장보기", "description": None, "status": "TODO", "created_at": "1970-01-01T00:00:00Z"}]
 
 
 @pytest.mark.parametrize(

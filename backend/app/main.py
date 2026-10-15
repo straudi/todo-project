@@ -36,20 +36,22 @@ DEFAULT_FRONTEND_DIR = Path(
 
 class Task(BaseModel):
     # 응답에 ordered_at은 넣지 않는다 (API-SPEC.md "API 계약 결정 기록").
+    # created_at은 UTC 날짜·시각 글자다 (예: "2026-10-15T09:30:00Z").
     id: int
     title: str
     description: str | None
     status: Literal["TODO", "IN_PROGRESS", "DONE"]
+    created_at: str
 
 
 class TaskCreate(BaseModel):
-    # status, id, ordered_at 같은 다른 필드는 무시한다 (API-SPEC.md "API 계약 결정 기록").
+    # status, id, ordered_at, created_at 같은 다른 필드는 무시한다 (API-SPEC.md "API 계약 결정 기록").
     title: str | None = None
     description: str | None = None
 
 
 class TaskUpdate(BaseModel):
-    # 보낸 필드만 바꾸고, 빠진 필드는 그대로 둔다 (API-SPEC.md "API 계약 결정 기록").
+    # 보낸 필드만 바꾸고, 빠진 필드는 그대로 둔다 (API-SPEC.md "API 계약 결정 기록"). created_at은 무시한다.
     title: str | None = None
     description: str | None = None
 

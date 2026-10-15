@@ -20,8 +20,8 @@ def client(db_path):
     with TestClient(create_app(db_path)) as client:
         with closing(sqlite3.connect(db_path)) as conn, conn:
             conn.executemany(
-                "INSERT INTO tasks (id, title, description, status, ordered_at)"
-                " VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO tasks (id, title, description, status, ordered_at, created_at)"
+                " VALUES (?1, ?2, ?3, ?4, ?5, ?5)",
                 [
                     (1, "장보기", "우유", "TODO", 100),
                     (2, "보고서 쓰기", "목요일까지", "TODO", 200),
@@ -46,7 +46,7 @@ def test_update_changes_title_and_description_but_not_status_or_place(client, db
     response = client.patch("/api/tasks/1", json={"title": "마트 가기", "description": "우유, 계란"})
 
     assert response.status_code == 200
-    assert response.json() == {"id": 1, "title": "마트 가기", "description": "우유, 계란", "status": "TODO"}
+    assert response.json() == {"id": 1, "title": "마트 가기", "description": "우유, 계란", "status": "TODO", "created_at": "1970-01-01T00:00:00Z"}
     assert ordered_at(db_path, 1) == before
     assert ids(client) == [3, 2, 1]
 
@@ -68,7 +68,7 @@ def test_update_keeps_fields_that_are_not_sent(client):
     response = client.patch("/api/tasks/2", json={"description": "금요일까지"})
 
     assert response.status_code == 200
-    assert response.json() == {"id": 2, "title": "보고서 쓰기", "description": "금요일까지", "status": "TODO"}
+    assert response.json() == {"id": 2, "title": "보고서 쓰기", "description": "금요일까지", "status": "TODO", "created_at": "1970-01-01T00:00:00Z"}
 
     response = client.patch("/api/tasks/2", json={"title": "보고서 마무리"})
     assert response.json()["description"] == "금요일까지"
@@ -82,7 +82,7 @@ def test_update_with_empty_title_is_rejected(client, title):
     assert response.status_code == 422
     assert response.json() == TITLE_EMPTY
     task = next(task for task in client.get("/api/tasks").json() if task["id"] == 2)
-    assert task == {"id": 2, "title": "보고서 쓰기", "description": "목요일까지", "status": "TODO"}
+    assert task == {"id": 2, "title": "보고서 쓰기", "description": "목요일까지", "status": "TODO", "created_at": "1970-01-01T00:00:00Z"}
     assert ids(client) == [3, 2, 1]
 
 

@@ -161,7 +161,8 @@ body {
   white-space: pre-wrap;
 }
 
-/* 카드 아래 줄: 오른쪽 끝에 상태 버튼, 수정, 삭제 */
+/* 카드 아래 줄: 왼쪽에 만든 날짜, 오른쪽 끝에 상태 표시, 수정, 삭제.
+   한 줄에 다 들어가지 않으면 날짜는 왼쪽에 남고 버튼들이 다음 줄 오른쪽 끝으로 넘어간다. */
 .card-footer {
   display: flex;
   flex-wrap: wrap;
@@ -169,6 +170,25 @@ body {
   justify-content: flex-end;
   gap: 8px;
   margin-top: 8px;
+}
+
+.card-footer .card-date {
+  margin-right: auto;
+}
+
+.card-footer-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* 만든 날짜: 보조 글자, 14px, 보통 굵기 (DESIGN.md "부품별 규칙"). */
+.card-date {
+  font-size: 14px;
+  color: var(--color-text-secondary);
 }
 
 .card-confirm {

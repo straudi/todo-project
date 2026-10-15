@@ -6,6 +6,8 @@ export type Task = {
   title: string
   description: string | null
   status: TaskStatus
+  /** 만든 시각. UTC 날짜·시각 글자 (예: "2026-10-15T09:30:00Z", API-SPEC.md "카드 필드") */
+  created_at: string
 }
 
 // 입력 오류는 칸별로 온다 (API-SPEC.md "오류").

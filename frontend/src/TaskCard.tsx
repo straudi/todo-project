@@ -31,6 +31,19 @@ type Props = {
   onDragEnd: () => void
 }
 
+// 만든 날짜는 "2026. 10. 15." 모양으로, 보는 기기의 시간대 날짜로 보여 준다 (SCREEN-SPEC.md "대안과 결정").
+const createdDateFormat = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'numeric', day: 'numeric' })
+
+function CreatedDate({ createdAt }: { createdAt: string }) {
+  const date = new Date(createdAt)
+  if (Number.isNaN(date.getTime())) return null
+  return (
+    <time className="card-date" dateTime={createdAt}>
+      {createdDateFormat.format(date)}
+    </time>
+  )
+}
+
 // 수정과 삭제 확인은 카드 안에서 한다 (SCREEN-SPEC.md "대안과 결정").
 type Mode = 'view' | 'edit' | 'confirmDelete'
 
@@ -135,6 +148,8 @@ export function TaskCard({
             {SAVE_FAILED_MESSAGE}
           </p>
         )}
+        {/* 만든 날짜는 수정 중에도 보인다 (SCREEN-SPEC.md "S-01 보이는 요소"). */}
+        <CreatedDate createdAt={task.created_at} />
         <div className="card-actions">
           <button type="button" className="button-primary" onClick={handleSave} disabled={busy}>
             저장
@@ -174,6 +189,7 @@ export function TaskCard({
               {DELETE_FAILED_MESSAGE}
             </p>
           )}
+          <CreatedDate createdAt={task.created_at} />
           <div className="card-actions">
             <button type="button" className="button-danger" onClick={handleConfirmDelete} disabled={busy}>
               예
@@ -191,41 +207,44 @@ export function TaskCard({
               {MOVE_FAILED_MESSAGE}
             </p>
           )}
-          {/* 카드 아래 줄: 상태 표시, 수정, 삭제 (DESIGN.md "부품별 규칙"). */}
+          {/* 카드 아래 줄: 왼쪽에 만든 날짜, 오른쪽 끝에 상태 표시, 수정, 삭제 (DESIGN.md "부품별 규칙"). */}
           <div className="card-footer">
-            <StatusMenu
-              status={task.status}
-              open={menuOpen}
-              disabled={moving}
-              onToggle={onMenuToggle}
-              onClose={onMenuClose}
-              onPick={(status) => {
-                onMenuClose()
-                onMove(status)
-              }}
-            />
-            {/* 아이콘만 보이는 버튼에도 "수정", "삭제"라는 이름을 붙인다 (DESIGN.md "아이콘"). */}
-            <button
-              type="button"
-              className="icon-button"
-              aria-label="수정"
-              onClick={startEdit}
-              disabled={moving}
-            >
-              <Pencil size={20} aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              className="icon-button icon-button-danger"
-              aria-label="삭제"
-              onClick={() => {
-                onMenuClose()
-                setMode('confirmDelete')
-              }}
-              disabled={moving}
-            >
-              <Trash2 size={20} aria-hidden="true" />
-            </button>
+            <CreatedDate createdAt={task.created_at} />
+            <div className="card-footer-buttons">
+              <StatusMenu
+                status={task.status}
+                open={menuOpen}
+                disabled={moving}
+                onToggle={onMenuToggle}
+                onClose={onMenuClose}
+                onPick={(status) => {
+                  onMenuClose()
+                  onMove(status)
+                }}
+              />
+              {/* 아이콘만 보이는 버튼에도 "수정", "삭제"라는 이름을 붙인다 (DESIGN.md "아이콘"). */}
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="수정"
+                onClick={startEdit}
+                disabled={moving}
+              >
+                <Pencil size={20} aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                className="icon-button icon-button-danger"
+                aria-label="삭제"
+                onClick={() => {
+                  onMenuClose()
+                  setMode('confirmDelete')
+                }}
+                disabled={moving}
+              >
+                <Trash2 size={20} aria-hidden="true" />
+              </button>
+            </div>
           </div>
         </>
       )}

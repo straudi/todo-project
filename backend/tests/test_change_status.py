@@ -20,8 +20,8 @@ def client(db_path):
     with TestClient(create_app(db_path)) as client:
         with closing(sqlite3.connect(db_path)) as conn, conn:
             conn.executemany(
-                "INSERT INTO tasks (id, title, description, status, ordered_at)"
-                " VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO tasks (id, title, description, status, ordered_at, created_at)"
+                " VALUES (?1, ?2, ?3, ?4, ?5, ?5)",
                 [
                     (1, "장보기", None, "TODO", 100),
                     (2, "보고서 쓰기", None, "TODO", 200),
@@ -40,7 +40,7 @@ def test_change_status_moves_card_to_top_of_new_status(client):
     response = client.patch("/api/tasks/1/status", json={"status": "DONE"})
 
     assert response.status_code == 200
-    assert response.json() == {"id": 1, "title": "장보기", "description": None, "status": "DONE"}
+    assert response.json() == {"id": 1, "title": "장보기", "description": None, "status": "DONE", "created_at": "1970-01-01T00:00:00Z"}
     assert [task["id"] for task in client.get("/api/tasks").json()] == [1, 3, 2]
 
 

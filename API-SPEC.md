@@ -5,7 +5,7 @@
 - **상태:** 확정
 - **승인한 사람:** 사람
 - **승인한 날짜:** 2026-10-13
-- **관련 작업:** P-08
+- **관련 작업:** P-08, P-29
 - **근거 문서:** [PRD.md](PRD.md), [ARCHITECTURE.md](ARCHITECTURE.md), [SCREEN-SPEC.md](SCREEN-SPEC.md), [DATA-MODEL.md](DATA-MODEL.md), [DECISIONS.md](DECISIONS.md) (D-001, D-004, D-005, D-008, D-009)
 - 이 문서는 화면과 서버가 주고받는 약속만 적는다. 저장할 정보의 뜻은 DATA-MODEL.md, 화면에 보이는 것은 SCREEN-SPEC.md에 적는다.
 - "(결정)"이라고 적지 않은 방식, 응답 번호, 이름은 AI 제안이며 확정된 것이 아니다.
@@ -19,9 +19,9 @@
 | 사용자 행동 | 엔드포인트 | 서버가 할 일 | 성공하면 화면 | 실패 종류 | 실패하면 화면 | 사용자의 다음 행동 |
 | --- | --- | --- | --- | --- | --- | --- |
 | 목록 보기 (앱 열기, 새로고침) F-05, F-06 | `GET /api/tasks` | 모든 카드를 ordered_at이 늦은 것부터 돌려준다. | 세 칸에 상태별로 놓인다. 칸 안에서는 최근 카드가 맨 위다. | 서버에 닿지 못함, STORAGE_FAILED | 세 칸은 보이고 "카드 없음"은 숨김. 보드 위에 실패 문구 (SCREEN-SPEC "대안과 결정") | 새로고침 |
-| 새 카드 만들기 (S-02에서 만들기) F-01, F-07 | `POST /api/tasks` | title을 검사한다. status를 TODO로, id와 ordered_at을 정해 저장한다. | 창이 닫히고, 카드가 "할 일" 칸 맨 위에 생긴다. | 빈 제목 (화면이 막음), TITLE_EMPTY (422, title 칸 오류), 서버에 닿지 못함, STORAGE_FAILED | 빈 제목: 창 안에 안내 문구, 적은 설명은 남음. 그 밖: 창이 열린 채 쓴 내용 유지 ([D-008](DECISIONS.md)), 창 안에 실패 문구 | 만들기 다시 누르기, 취소 |
-| 내용 수정 (수정 → 저장) F-02, F-07 | `PATCH /api/tasks/{id}` | title을 검사한다. title과 description만 바꾼다. status와 ordered_at은 그대로 둔다. | 내용이 바뀐다. 칸 안 자리는 그대로다. | 빈 제목 (화면이 막음), TITLE_EMPTY (422, title 칸 오류), TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 빈 제목: 안내 문구. 그 밖: 카드는 원래 내용이고, 수정 중인 채로 고치던 글이 남고, 카드 안에 실패 문구 (SCREEN-SPEC "대안과 결정"). TASK_NOT_FOUND: 카드를 화면에서 빼고 보드 위에 안내 (2026-10-14) | 저장 다시 누르기, 취소 |
-| 상태 바꾸기 (상태 버튼, 다른 칸에 끌어다 놓기) F-04 | `PATCH /api/tasks/{id}/status` | status를 검사한다. 바꾼 뒤 ordered_at을 지금으로 정한다. | 카드가 새 칸 맨 위에 놓인다. | INVALID_STATUS, TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 카드는 원래 칸, 원래 자리. 카드 안에 실패 문구. TASK_NOT_FOUND: 카드를 화면에서 빼고 보드 위에 안내 (2026-10-14) | 다시 누르거나 끌기, 새로고침 |
+| 새 카드 만들기 (S-02에서 만들기) F-01, F-07 | `POST /api/tasks` | title을 검사한다. status를 TODO로, id, ordered_at, created_at을 정해 저장한다. | 창이 닫히고, 카드가 "할 일" 칸 맨 위에 생긴다. | 빈 제목 (화면이 막음), TITLE_EMPTY (422, title 칸 오류), 서버에 닿지 못함, STORAGE_FAILED | 빈 제목: 창 안에 안내 문구, 적은 설명은 남음. 그 밖: 창이 열린 채 쓴 내용 유지 ([D-008](DECISIONS.md)), 창 안에 실패 문구 | 만들기 다시 누르기, 취소 |
+| 내용 수정 (수정 → 저장) F-02, F-07 | `PATCH /api/tasks/{id}` | title을 검사한다. title과 description만 바꾼다. status, ordered_at, created_at은 그대로 둔다. | 내용이 바뀐다. 칸 안 자리는 그대로다. | 빈 제목 (화면이 막음), TITLE_EMPTY (422, title 칸 오류), TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 빈 제목: 안내 문구. 그 밖: 카드는 원래 내용이고, 수정 중인 채로 고치던 글이 남고, 카드 안에 실패 문구 (SCREEN-SPEC "대안과 결정"). TASK_NOT_FOUND: 카드를 화면에서 빼고 보드 위에 안내 (2026-10-14) | 저장 다시 누르기, 취소 |
+| 상태 바꾸기 (상태 버튼, 다른 칸에 끌어다 놓기) F-04 | `PATCH /api/tasks/{id}/status` | status를 검사한다. 바꾼 뒤 ordered_at을 지금으로 정한다. created_at은 그대로 둔다. | 카드가 새 칸 맨 위에 놓인다. | INVALID_STATUS, TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 카드는 원래 칸, 원래 자리. 카드 안에 실패 문구. TASK_NOT_FOUND: 카드를 화면에서 빼고 보드 위에 안내 (2026-10-14) | 다시 누르거나 끌기, 새로고침 |
 | 삭제 ("정말 지울까요?"에서 "예") F-03 | `DELETE /api/tasks/{id}` | 카드를 저장소에서 지운다. | 카드가 사라진다. | TASK_NOT_FOUND, 서버에 닿지 못함, STORAGE_FAILED | 카드가 남는다. 카드 안에 실패 문구. TASK_NOT_FOUND: 이미 지워진 것이므로 안내 없이 카드를 화면에서 뺀다 (2026-10-14) | 삭제 다시 누르기, 새로고침 |
 
 - TASK_NOT_FOUND는 주로 다른 기기에서 이미 지운 카드를 건드릴 때 생긴다 ([D-009](DECISIONS.md)). 이때 화면이 할 일은 미정이다 ("미정" 절).
@@ -44,8 +44,9 @@
 | description | 글자 | 됨 (null) | 사용자 |
 | status | TODO / IN_PROGRESS / DONE | 안 됨 | 처음에는 서버(TODO), 그 뒤에는 사용자 |
 | ordered_at | 시각 | 안 됨 | 서버. 응답에는 넣지 않는다 ("API 계약 결정 기록") |
+| created_at | 날짜·시각 글자, UTC (예: `"2026-10-15T09:30:00Z"`) | 안 됨 | 서버. 만들 때 정하고 바꾸지 않는다. 응답에 넣는다 (2026-10-15, P-29) |
 
-- 화면은 id와 ordered_at을 보내지 않는다. 만들 때는 status도 보내지 않는다.
+- 화면은 id, ordered_at, created_at을 보내지 않는다. 만들 때는 status도 보내지 않는다.
 - status는 세 값만 받는다. 다른 값이 오면 서버가 거절한다.
 
 ### 오류
@@ -53,7 +54,7 @@
 - 제목이 비었거나 공백(띄어쓰기, 탭, 줄바꿈)만 있으면 422로 거절하고, 제목 칸을 가리키는 칸별 오류를 돌려준다. (결정) 필드 이름 title은 정했다 ([DATA-MODEL.md](DATA-MODEL.md) "데이터 규칙 결정 기록"). 거절 이유 이름은 TITLE_EMPTY다 (2026-10-14). title이 없거나 null이어도 TITLE_EMPTY로 거절한다. 저장할 때 제목의 앞뒤 공백은 지운다 (2026-10-14).
 - 오류 본문은 `{"errors": [{"field": ..., "reason": ...}]}` 모양이다 (2026-10-14).
 - 글자가 와야 할 필드에 다른 종류의 값(숫자 등)이 오면 그 필드에 INVALID_TYPE으로 422를 돌려준다 (2026-10-14).
-- 만들기 요청에 status, id, ordered_at이 와도 무시한다. 새 카드는 항상 TODO다 (2026-10-14).
+- 만들기 요청에 status, id, ordered_at이 와도 무시한다. 새 카드는 항상 TODO다 (2026-10-14). 만들기·수정 요청에 created_at이 와도 무시한다 (2026-10-15).
 - 입력 오류는 칸별로 돌려준다. 어느 필드가 왜 틀렸는지 담는다. (결정)
 - 없는 카드처럼 입력 필드와 관계없는 오류도 같은 모양으로 돌려주고, field는 null로 둔다 (2026-10-14). 저장소에 읽거나 쓰지 못할 때(STORAGE_FAILED)도 같은 모양이다 (2026-10-15). SQLite가 아닌 예상 못한 오류는 FastAPI 기본 500이고, 그 모양은 정하지 않았다.
 
@@ -77,14 +78,14 @@
 
 ## 요청·응답 예시
 
-ordered_at을 응답에 넣을지가 미정이어서, 아래 예시에는 넣지 않았다.
+ordered_at은 응답에 넣지 않는다 ("API 계약 결정 기록"). created_at은 응답에 넣는다 (2026-10-15).
 
 **목록 보기** `GET /api/tasks` → 200
 
 ```json
 [
-  { "id": 2, "title": "보고서 쓰기", "description": "목요일까지", "status": "IN_PROGRESS" },
-  { "id": 1, "title": "장보기", "description": null, "status": "TODO" }
+  { "id": 2, "title": "보고서 쓰기", "description": "목요일까지", "status": "IN_PROGRESS", "created_at": "2026-10-15T09:40:00Z" },
+  { "id": 1, "title": "장보기", "description": null, "status": "TODO", "created_at": "2026-10-15T09:30:00Z" }
 ]
 ```
 
@@ -97,7 +98,7 @@ ordered_at을 응답에 넣을지가 미정이어서, 아래 예시에는 넣지
 → 201
 
 ```json
-{ "id": 1, "title": "장보기", "description": null, "status": "TODO" }
+{ "id": 1, "title": "장보기", "description": null, "status": "TODO", "created_at": "2026-10-15T09:30:00Z" }
 ```
 
 **내용 수정** `PATCH /api/tasks/1`
@@ -141,7 +142,7 @@ ordered_at을 응답에 넣을지가 미정이어서, 아래 예시에는 넣지
 | 칸 안 순서 직접 바꾸기 | 순서를 바꾸는 엔드포인트가 없다. |
 | 삭제한 카드 되살리기 | 되살리는 엔드포인트가 없다. 삭제 응답에 카드를 돌려주지 않는다. |
 | 카드 검색 | `GET /api/tasks`에 검색 조건이 없다. |
-| 마감일, 만든 날짜, 우선순위, 분류 | 해당 필드가 없다. |
+| 마감일, 우선순위, 분류 | 해당 필드가 없다. |
 | 같은 네트워크 밖(인터넷)에서 쓰기 | 다루지 않는다 ([D-009](DECISIONS.md)). |
 | 앱 안 AI 기능 | 다루지 않는다 ([D-001](DECISIONS.md)). |
 
@@ -166,6 +167,7 @@ ordered_at을 응답에 넣을지가 미정이어서, 아래 예시에는 넣지
 | 만들기 요청에 status가 올 때 | 무시 / 거절 | 무시하고 TODO로 만든다. id, ordered_at도 무시한다 (2026-10-14) | AI 제안의 이유를 받아들임: PRD F-01 "새 카드는 항상 할 일로 시작"을 그대로 지킨다 | 화면은 status를 보내지 않는다. |
 | title이 없거나 글자가 아닌 요청 | 거절 이유를 나눔 / 하나로 | 없거나 null이면 TITLE_EMPTY, 글자가 아닌 값이면 INVALID_TYPE. 모두 422 (2026-10-14) | AI 제안의 이유를 받아들임: 화면에는 제목이 없는 것과 빈 것이 같은 안내로 충분하다 | 화면에서는 생기지 않는 요청이다. |
 | 제목 앞뒤 공백 | 지움 / 입력한 그대로 | 저장할 때 앞뒤 공백만 지운다. 가운데는 그대로 (2026-10-14) | AI 제안의 이유를 받아들임: 실수로 넣은 공백이 카드에 남지 않는다 | " 장보기 "로 만들면 카드에 "장보기"가 보인다. |
+| 만든 시각을 주고받는 모양 | 날짜·시각 글자 (UTC) / 숫자 (마이크로초) | 날짜·시각 글자, UTC, 초 단위까지, 끝에 Z (예: `"2026-10-15T09:30:00Z"`). 응답에만 넣고 요청에서는 받지 않는다 (2026-10-15, P-29) | AI 제안의 이유를 받아들임: API 문서 화면에서 사람이 읽을 수 있고, 화면이 바로 날짜로 바꿀 수 있다 | 화면은 이 값을 보는 기기의 시간대 날짜로 바꿔 보여 준다 (SCREEN-SPEC "대안과 결정"). |
 | 거절 이유 이름 | CARD_NOT_FOUND / TASK_NOT_FOUND 등 | 없는 카드는 TASK_NOT_FOUND. 코드와 API 이름은 task, 화면에 보이는 말은 "카드"로 한다 (2026-10-13). 빈 제목은 TITLE_EMPTY, 종류가 틀린 값은 INVALID_TYPE (2026-10-14). 세 값이 아닌 상태는 INVALID_STATUS (422), 없는 카드는 404 (2026-10-14). 다른 거절 이유 이름은 미정 | 미정 | 사용자에게는 보이지 않는다. |
 
 ## 미정
