@@ -6,7 +6,7 @@
 - **승인한 사람:** 사람
 - **승인한 날짜:** 2026-10-13
 - **관련 작업:** P-09
-- **근거 문서:** [PRD.md](PRD.md), [ARCHITECTURE.md](ARCHITECTURE.md), [SCREEN-SPEC.md](SCREEN-SPEC.md), [DATA-MODEL.md](DATA-MODEL.md), [API-SPEC.md](API-SPEC.md), [DECISIONS.md](DECISIONS.md) (D-001, D-004, D-005, D-007, D-008, D-009, D-010, D-011, D-012)
+- **근거 문서:** [PRD.md](PRD.md), [ARCHITECTURE.md](ARCHITECTURE.md), [SCREEN-SPEC.md](SCREEN-SPEC.md), [DATA-MODEL.md](DATA-MODEL.md), [API-SPEC.md](API-SPEC.md), [DECISIONS.md](DECISIONS.md) (D-001, D-004, D-005, D-007, D-008, D-009, D-010, D-011, D-012, D-015)
 - 이 문서는 무엇을 보면 통과인지(시험 문제와 정답)만 적는다. 화면에 무엇이 보이는지는 SCREEN-SPEC.md, 요청과 응답은 API-SPEC.md에 적는다.
 - 시나리오는 AI가 쓴 초안을 사람이 확인해 확정했다. "자동 테스트" 칸은 계속 AI 제안이다.
 
@@ -14,7 +14,7 @@
 
 - **적용 범위:** 첫 버전 ([D-004](DECISIONS.md))
 - **기준:** PRD.md에는 "Must" 절과 "인수 조건" 절이 없다. "만들 기능" 표의 F-01 ~ F-07에 적힌 문장 하나하나를 인수 조건으로 보았다.
-- **검증 방법:** 자동 테스트를 먼저 실행하고, 모두 통과하면 사람이 이 문서의 시나리오를 모두 직접 따라 하며 확인한다. 자동 테스트가 실패하면 사람 확인으로 넘어가지 않는다. ([D-010](DECISIONS.md))
+- **검증 방법:** 자동 테스트를 먼저 실행하고, 모두 통과하면 사람이 이 문서의 시나리오를 모두 직접 따라 하며 확인한다. 자동 테스트가 실패하면 사람 확인으로 넘어가지 않는다. ([D-010](DECISIONS.md)) 두 번째 버전(P-26 ~ P-30)은 자동 테스트가 모두 통과하면 AI가 앱 안 브라우저로 확인하고, 사람 확인은 하지 않는다. "없음 (사람만)"인 T-30, T-31은 두 번째 버전에서 확인하지 않는다 ([D-015](DECISIONS.md), 2026-10-15).
 - **자동 테스트 도구:** 서버는 pytest + FastAPI TestClient, 브라우저는 Playwright (Node.js, TypeScript) ([D-011](DECISIONS.md)). 화면 부품 테스트 도구는 첫 버전에서 쓰지 않는다. 버전은 설치하는 날의 최신 안정판으로 한다. Playwright는 이 컴퓨터에 설치된 Chrome을 쓴다. ([D-012](DECISIONS.md))
 - **"자동 테스트" 칸:** 시나리오마다 어느 도구로 자동 확인할지 적은 AI 제안이다. "없음 (사람만)"인 시나리오는 사람만 확인한다.
 - **사람이 서버에 직접 요청을 보낼 도구:** 서버에 들어 있는 API 문서 화면 `http://localhost:8000/docs`에서 요청을 보낸다. 이 화면은 인터넷 연결이 필요하다 (2026-10-14).
