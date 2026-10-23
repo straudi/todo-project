@@ -120,3 +120,27 @@ test('T-60 목록을 받지 못하면 요약 줄이 없고 앱 제목과 새 카
   await expect(appTitle(page)).toBeVisible()
   await expect(page.getByRole('button', { name: '새 카드' })).toBeVisible()
 })
+
+test('T-61 만들기 창에 제목 "새 카드"가 보인다', async ({ page }) => {
+  seedTasks([])
+  await page.goto('/')
+
+  await page.getByRole('button', { name: '새 카드' }).click()
+
+  const dialog = page.getByRole('dialog', { name: '카드 만들기' })
+  await expect(dialog.getByRole('heading', { name: '새 카드' })).toBeVisible()
+})
+
+test('T-62 상태 표시의 화살표는 닫혀 있으면 아래, 열리면 위를 가리키고 글자는 그대로다', async ({ page }) => {
+  await openBoard(page, [{ id: 1, title: '장보기', description: null, status: 'TODO', ordered_at: 100 }])
+  const pill = statusPill(page, '할 일', '장보기')
+
+  await expect(pill.locator('svg.lucide-chevron-down')).toHaveCount(1)
+  await expect(pill.locator('svg.lucide-chevron-up')).toHaveCount(0)
+  await expect(pill).toHaveText('할 일')
+
+  await pill.click()
+  await expect(pill.locator('svg.lucide-chevron-up')).toHaveCount(1)
+  await expect(pill.locator('svg.lucide-chevron-down')).toHaveCount(0)
+  await expect(pill).toHaveText('할 일')
+})

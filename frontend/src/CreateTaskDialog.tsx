@@ -46,6 +46,8 @@ export function CreateTaskDialog({ onCreated, onCancel }: Props) {
   return (
     <div className="dialog-backdrop">
       <div role="dialog" aria-modal="true" aria-label="카드 만들기" className="dialog">
+        {/* 보이는 창 제목 (SCREEN-SPEC.md S-02 "창 제목"). 화면 읽기 이름은 "카드 만들기" 그대로 둔다. */}
+        <h2 className="dialog-title">새 카드</h2>
         <label className="field">
           제목
           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />

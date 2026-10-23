@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react'
+import { Check, ChevronDown, ChevronUp } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import type { TaskStatus } from './api'
 import { COLUMNS } from './columns'
@@ -56,6 +56,8 @@ export function StatusMenu({ status, open, disabled, onToggle, onClose, onPick }
       >
         <current.Icon size={16} aria-hidden="true" />
         {current.label}
+        {/* 메뉴가 닫혀 있으면 아래, 열려 있으면 위를 가리킨다 (DESIGN.md "아이콘"). */}
+        {open ? <ChevronUp size={16} aria-hidden="true" /> : <ChevronDown size={16} aria-hidden="true" />}
       </button>
       {open && (
         <div className="status-menu-list" role="group" aria-label="상태 고르기">
