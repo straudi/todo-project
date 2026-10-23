@@ -54,6 +54,26 @@ body {
   padding: 24px;
 }
 
+/* 머리 영역: 앱 제목과 새 카드 버튼을 한 줄 양 끝에, 요약 줄은 그 아래 (SCREEN-SPEC.md S-01). */
+.board-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.board-title {
+  margin: 0;
+}
+
+.board-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .columns {
   display: flex;
   gap: 24px;

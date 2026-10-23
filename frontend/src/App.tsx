@@ -1,4 +1,3 @@
-import { Plus } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import {
   changeTaskStatus,
@@ -9,6 +8,7 @@ import {
   type Task,
   type TaskStatus,
 } from './api'
+import { BoardHeader, type StatusCounts } from './BoardHeader'
 import { COLUMNS } from './columns'
 import { DELETED_ELSEWHERE_MESSAGE, LOAD_FAILED_MESSAGE } from './messages'
 import { CreateTaskDialog } from './CreateTaskDialog'
@@ -140,16 +140,18 @@ function App() {
     }
   }
 
+  // 칸별 개수는 한 번만 세어 칸 머리와 요약 줄에 함께 쓴다. 목록을 받지 못했으면 null (PRD.md F-05).
+  const counts: StatusCounts | null = loadFailed
+    ? null
+    : {
+        TODO: tasks.filter((task) => task.status === 'TODO').length,
+        IN_PROGRESS: tasks.filter((task) => task.status === 'IN_PROGRESS').length,
+        DONE: tasks.filter((task) => task.status === 'DONE').length,
+      }
+
   return (
     <main className="board">
-      <button
-        type="button"
-        className="new-card-button button-primary"
-        onClick={() => setCreating(true)}
-      >
-        <Plus size={20} aria-hidden="true" />
-        새 카드
-      </button>
+      <BoardHeader counts={counts} onCreate={() => setCreating(true)} />
       {loadFailed && (
         <p role="alert" className="action-error">
           {LOAD_FAILED_MESSAGE}
@@ -183,9 +185,9 @@ function App() {
                 <column.Icon className="column-icon" size={28} aria-hidden="true" />
                 <h2 className="column-title">{column.label}</h2>
                 {/* 칸별 카드 개수. 목록을 받지 못했으면 보이지 않는다 (PRD.md F-05). */}
-                {!loadFailed && (
-                  <span className="column-count" aria-label={`카드 ${columnTasks.length}장`}>
-                    {columnTasks.length}
+                {counts && (
+                  <span className="column-count" aria-label={`카드 ${counts[column.status]}장`}>
+                    {counts[column.status]}
                   </span>
                 )}
               </header>
