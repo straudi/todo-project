@@ -281,8 +281,8 @@ button {
   cursor: pointer;
 }
 
-/* 누르는 순간: 그림자 쪽으로 2px 내려앉는다. */
-button:active:not(:disabled) {
+/* 누르는 순간: 그림자 쪽으로 2px 내려앉는다. 그림자가 없는 버튼(아이콘 버튼, 상태 표시, 메뉴 항목)은 움직이지 않는다. */
+button:active:not(:disabled, .icon-button, .status-pill, .status-menu-item) {
   transform: translate(2px, 2px);
   box-shadow: 1px 1px 0 var(--color-border);
 }
