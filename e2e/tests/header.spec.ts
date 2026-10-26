@@ -144,3 +144,32 @@ test('T-62 상태 표시의 화살표는 닫혀 있으면 아래, 열리면 위�
   await expect(pill.locator('svg.lucide-chevron-down')).toHaveCount(0)
   await expect(pill).toHaveText('할 일')
 })
+
+test('T-64 목록을 받기 전에는 요약 줄, 칸별 개수, "카드 없음"이 보이지 않고, 받은 뒤에 보인다', async ({ page }) => {
+  seedTasks([{ id: 1, title: '장보기', description: null, status: 'TODO', ordered_at: 100 }])
+  let release!: () => void
+  const held = new Promise<void>((resolve) => (release = resolve))
+  await page.route(
+    (url) => url.pathname === '/api/tasks',
+    async (route) => {
+      await held
+      await route.continue()
+    },
+  )
+
+  await page.goto('/')
+  await expect(appTitle(page)).toBeVisible()
+  await expect(summary(page)).toHaveCount(0)
+  await expect(page.locator('.column-count')).toHaveCount(0)
+  await expect(page.getByText('카드 없음')).toHaveCount(0)
+
+  release()
+  await expectSummary(page, ['할 일 1', '진행 중 0', '완료 0'], '· 모두 1장')
+  await expect(page.locator('.column-count')).toHaveText(['1', '0', '0'])
+  await expect(page.getByText('카드 없음')).toHaveCount(2)
+})
+
+test('T-64 요약 줄의 "·"는 화면 읽기 도구가 읽지 않는다', async ({ page }) => {
+  await openBoard(page, [])
+  await expect(summary(page).locator('.summary-total [aria-hidden="true"]')).toHaveText('·')
+})

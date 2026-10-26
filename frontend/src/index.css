@@ -311,6 +311,7 @@ button:disabled {
 }
 
 .status-pill {
+  min-height: 34px;
   padding: 2px 8px;
   background: var(--status-color);
   font-size: 13px;
@@ -433,6 +434,8 @@ textarea:focus-visible {
 .field-error::before,
 .action-error::before,
 .board-notice p::before {
+  /* 대체 글자 문법을 모르는 브라우저는 다음 줄을 버리고 이 줄을 쓴다. */
+  content: '!';
   content: '!' / '';
   margin-right: 8px;
   color: var(--color-danger);
@@ -536,6 +539,10 @@ textarea:focus-visible {
 
   .icon-button {
     width: 44px;
+    min-height: 44px;
+  }
+
+  .status-pill {
     min-height: 44px;
   }
 

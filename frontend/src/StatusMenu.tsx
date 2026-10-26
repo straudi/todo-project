@@ -73,7 +73,7 @@ export function StatusMenu({ status, open, disabled, onToggle, onClose, onPick }
                 disabled={isCurrent}
                 onClick={() => onPick(column.status)}
               >
-                <column.Icon className="status-menu-icon" size={16} aria-hidden="true" />
+                <column.Icon className="status-menu-icon" size={12} absoluteStrokeWidth aria-hidden="true" />
                 <span className="status-menu-label">{column.label}</span>
                 {isCurrent && <Check size={16} aria-hidden="true" />}
               </button>

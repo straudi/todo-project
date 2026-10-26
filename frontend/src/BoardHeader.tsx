@@ -30,7 +30,8 @@ export function BoardHeader({ counts, onCreate }: Props) {
             </span>
           ))}
           <span className="summary-total">
-            · 모두 {COLUMNS.reduce((sum, column) => sum + counts[column.status], 0)}장
+            {/* 꾸밈 점은 화면 읽기 도구가 읽지 않는다. */}
+            <span aria-hidden="true">·</span> 모두 {COLUMNS.reduce((sum, column) => sum + counts[column.status], 0)}장
           </span>
         </div>
       )}

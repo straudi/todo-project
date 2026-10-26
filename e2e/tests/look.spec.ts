@@ -87,3 +87,45 @@ test('T-63 그림자가 없는 버튼(수정·삭제·상태 표시)은 누르�
     await page.mouse.up()
   }
 })
+
+test('T-63 컴퓨터 너비에서 가로 넘침이 없고 세 칸의 너비가 같다 (긴 제목이 있어도)', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await openBoard(page, [{ id: 1, title: 'A'.repeat(300), description: null, status: 'TODO', ordered_at: 100 }])
+
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1280)
+  const widths = await Promise.all(
+    ['할 일', '진행 중', '완료'].map(async (name) => (await column(page, name).boundingBox())!.width),
+  )
+  expect(Math.max(...widths) - Math.min(...widths)).toBeLessThanOrEqual(1)
+})
+
+test('T-63 칸 머리 아이콘과 메뉴 항목 아이콘의 선은 2px로 그려진다', async ({ page }) => {
+  await openBoard(page, [{ id: 1, title: '장보기', description: null, status: 'TODO', ordered_at: 100 }])
+  await page.locator('.status-pill').first().click()
+
+  // 그려진 선 굵기 = stroke-width × (그림이 그려지는 너비 / viewBox 24)
+  const drawn = (selector: string) =>
+    page.locator(selector).first().evaluate((svg) => {
+      const style = getComputedStyle(svg)
+      const content =
+        svg.getBoundingClientRect().width -
+        parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) -
+        parseFloat(style.borderLeftWidth) - parseFloat(style.borderRightWidth)
+      return Number(svg.getAttribute('stroke-width')) * (content / 24)
+    })
+  expect(await drawn('.column-icon')).toBeCloseTo(2, 1)
+  expect(await drawn('.status-menu-icon')).toBeCloseTo(2, 1)
+})
+
+test('T-63 컴퓨터 너비에서 카드 아래 줄의 상태 표시·수정·삭제 높이가 같다', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await openBoard(page, [{ id: 1, title: '장보기', description: null, status: 'TODO', ordered_at: 100 }])
+  const card = page.locator('.card').first()
+
+  const heights = await Promise.all(
+    [card.locator('.status-pill'), card.getByRole('button', { name: '수정' }), card.getByRole('button', { name: '삭제' })].map(
+      async (button) => (await button.boundingBox())!.height,
+    ),
+  )
+  expect(heights).toEqual([34, 34, 34])
+})

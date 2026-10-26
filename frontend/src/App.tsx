@@ -23,6 +23,8 @@ function App() {
   const [moveFailedIds, setMoveFailedIds] = useState<ReadonlySet<number>>(new Set())
   // 처음 열 때 목록을 받지 못했다 (SCREEN-SPEC.md "대안과 결정").
   const [loadFailed, setLoadFailed] = useState(false)
+  // 처음 목록을 받았다. 받기 전에는 개수와 "카드 없음"을 보이지 않는다 (SCREEN-SPEC.md S-01, P-32).
+  const [listLoaded, setListLoaded] = useState(false)
   // 카드를 끄는 동안 마우스가 올라간 칸. 그 칸에 테두리를 두른다 (DESIGN.md "부품별 규칙").
   const [dropTarget, setDropTarget] = useState<TaskStatus | null>(null)
   // 상태 메뉴가 열린 카드. 메뉴는 한 번에 하나만 열린다 (SCREEN-SPEC.md "상태 표시와 상태 메뉴").
@@ -38,6 +40,7 @@ function App() {
       .then((loaded) => {
         setTasks(loaded)
         setLoadFailed(false)
+        setListLoaded(true)
       })
       .catch(() => setLoadFailed(true))
   }, [])
@@ -140,8 +143,8 @@ function App() {
     }
   }
 
-  // 칸별 개수는 한 번만 세어 칸 머리와 요약 줄에 함께 쓴다. 목록을 받지 못했으면 null (PRD.md F-05).
-  const counts: StatusCounts | null = loadFailed
+  // 칸별 개수는 한 번만 세어 칸 머리와 요약 줄에 함께 쓴다. 목록을 받기 전이거나 받지 못했으면 null (PRD.md F-05).
+  const counts: StatusCounts | null = !listLoaded
     ? null
     : {
         TODO: tasks.filter((task) => task.status === 'TODO').length,
@@ -182,17 +185,18 @@ function App() {
               onDrop={canDrag ? (event) => handleDrop(event, column.status) : undefined}
             >
               <header className="column-header">
-                <column.Icon className="column-icon" size={28} aria-hidden="true" />
+                {/* 원 안에 그려지는 크기(14px)로 그려 선을 2px로 맞춘다 (DESIGN.md "아이콘"). */}
+                <column.Icon className="column-icon" size={14} absoluteStrokeWidth aria-hidden="true" />
                 <h2 className="column-title">{column.label}</h2>
-                {/* 칸별 카드 개수. 목록을 받지 못했으면 보이지 않는다 (PRD.md F-05). */}
+                {/* 칸별 카드 개수. 목록을 받기 전이거나 받지 못했으면 보이지 않는다 (PRD.md F-05). */}
                 {counts && (
                   <span className="column-count" aria-label={`카드 ${counts[column.status]}장`}>
                     {counts[column.status]}
                   </span>
                 )}
               </header>
-              {/* 카드가 없는 칸의 문구는 PRD.md F-05를 따른다. 목록을 받지 못했으면 보이지 않는다. */}
-              {columnTasks.length === 0 && !loadFailed && <p className="column-empty">카드 없음</p>}
+              {/* 카드가 없는 칸의 문구는 PRD.md F-05를 따른다. 목록을 받기 전이거나 받지 못했으면 보이지 않는다. */}
+              {counts && columnTasks.length === 0 && <p className="column-empty">카드 없음</p>}
               {columnTasks.map((task) => (
                 <TaskCard
                   key={task.id}
